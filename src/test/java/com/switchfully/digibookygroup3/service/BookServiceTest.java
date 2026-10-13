@@ -56,10 +56,10 @@ class BookServiceTest {
         verify(authorRepositoryMock).getById(secondAuthorId);
 
         assertThat(bookDTOS).isNotEmpty().hasSize(2);
-        assertThat(bookDTOS.get(0).id()).isNotEmpty();
-        assertThat(bookDTOS).extracting(BookDTO::ISBN).containsOnly("ISBN1", "ISBN2");
+        assertThat(bookDTOS.get(0).getId()).isNotEmpty();
+        assertThat(bookDTOS).extracting(BookDTO::getIsbn).containsOnly("ISBN1", "ISBN2");
         assertThat(bookDTOS)
-                .extracting(BookDTO::author)
+                .extracting(BookDTO::getAuthorDTO)
                 .extracting(AuthorDTO::firstname)
                 .containsOnly("a1_firstname", "a2_firstname");
     }
