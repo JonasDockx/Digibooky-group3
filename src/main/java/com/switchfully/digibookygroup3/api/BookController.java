@@ -19,7 +19,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public List<BookDTO> getAllBooks() {
         return bookService.getAllBooks();
