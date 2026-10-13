@@ -1,5 +1,7 @@
 package com.switchfully.digibookygroup3.domain.member;
 
+import java.util.UUID;
+
 public class Member {
     private final String id;
     private final String INSS;
@@ -12,7 +14,7 @@ public class Member {
     private String city;
     private MemberType memberType;
 
-    public Member(String id, String INSS,
+    public Member(String INSS,
                   String lastname,
                   String firstname,
                   String email,
@@ -21,7 +23,7 @@ public class Member {
                   String postalCode,
                   String city,
                   MemberType memberType) {
-        this.id = id;
+        this.id = UUID.randomUUID().toString();
         this.INSS = INSS;
         this.lastname = lastname;
         this.firstname = firstname;
@@ -31,5 +33,45 @@ public class Member {
         this.postalCode = postalCode;
         this.city = city;
         this.memberType = memberType;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getINSS() {
+        return INSS;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public MemberType getMemberType() {
+        return memberType;
     }
 }
