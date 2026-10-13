@@ -30,14 +30,14 @@ public class MemberService {
     }
 
     private String checkEmailUnique(String email) {
-        if(!memberRepository.isEmailUnique(email)){
+        if(memberRepository.isEmailPresent(email)){
             throw  new RuntimeException();
         }
         return email;
     }
 
     private String checkINSSUnique(String inss) {
-        if(!memberRepository.isINSSUnique(inss)){
+        if(memberRepository.isINSSPresent(inss)){
             throw  new RuntimeException();
         }
         return inss;
