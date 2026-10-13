@@ -8,7 +8,6 @@ public class Member extends User{
     private String streetNumber;
     private String postalCode;
     private String city;
-    private UserType userType;
 
     public Member(String inss,
                   String lastname,
@@ -60,10 +59,6 @@ public class Member extends User{
 
     public String getCity() {
         return city;
-    }
-
-    public UserType getMemberType() {
-        return userType;
     }
 
     private static String normalizeInss(String inss) {

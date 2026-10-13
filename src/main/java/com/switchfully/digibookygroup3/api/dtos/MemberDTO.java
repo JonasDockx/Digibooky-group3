@@ -73,7 +73,7 @@ public class MemberDTO {
         return city;
     }
 
-    public UserType getMemberType() {
+    public UserType getUserType() {
         return userType;
     }
 }

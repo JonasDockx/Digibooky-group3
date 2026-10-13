@@ -33,7 +33,7 @@ public class MemberMapper {
                 member.getStreetNumber(),
                 member.getPostalCode(),
                 member.getCity(),
-                member.getMemberType());
+                member.getUserType());
     }
 
     public List<MemberDTO> mapMemberToMemberDTO(List<Member> members) {
