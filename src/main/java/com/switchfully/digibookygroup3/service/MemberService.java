@@ -5,7 +5,7 @@ import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.user.Member;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
-import com.switchfully.digibookygroup3.exceptions.UserAlreadyExistsException;
+import com.switchfully.digibookygroup3.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
