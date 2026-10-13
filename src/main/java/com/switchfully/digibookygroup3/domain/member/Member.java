@@ -1,5 +1,6 @@
 package com.switchfully.digibookygroup3.domain.member;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Member {
@@ -23,10 +24,10 @@ public class Member {
                   String postalCode,
                   String city) {
         this.id = UUID.randomUUID().toString();
-        this.inss = inss;
+        this.inss = normalizeInss(inss).trim();
         this.lastname = lastname;
         this.firstname = firstname;
-        this.email = email;
+        this.email = email.trim().toLowerCase();
         this.streetName = streetName;
         this.streetNumber = streetNumber;
         this.postalCode = postalCode;
@@ -72,5 +73,10 @@ public class Member {
 
     public MemberType getMemberType() {
         return memberType;
+    }
+
+    private static String normalizeInss(String inss) {
+        Objects.requireNonNull(inss, "INSS is required");
+        return inss.replaceAll("\\D", "");
     }
 }

@@ -10,7 +10,8 @@ public class CreateMemberDTO {
     private final String lastname;
     private final String firstname;
     @NotBlank
-    @Email
+    @Email(regexp = "^[A-Za-z0-9_%+-]+(?:\\.[A-Za-z0-9_%+-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z]{2,}$",
+            message = "Email must be of the form name@domain.tld")
     private String email;
     private String streetName;
     private String streetNumber;

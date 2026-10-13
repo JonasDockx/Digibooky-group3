@@ -43,8 +43,8 @@ public class MemberService {
     }
 
     private String checkEmailUnique(String email) {
-        if (memberRepository.isEmailPresent(email)) {
-            logger.error("Email {} is invalid or already in use", email);
+        if (memberRepository.isEmailPresent(email.trim().toLowerCase())) {
+            logger.error("Duplicate e-mail address");
             throw new UserAlreadyExistsException();
         }
         logger.info("E-mail address {} is valid and not in use yet", email);
@@ -52,8 +52,8 @@ public class MemberService {
     }
 
     private String checkINSSUnique(String inss) {
-        if (memberRepository.isINSSPresent(inss)) {
-            logger.error("INSS number {} is invalid or already in use", inss);
+        if (memberRepository.isINSSPresent(inss.trim())) {
+            logger.error("Duplicate INSS number");
             throw new UserAlreadyExistsException();
         }
         logger.info("INSS number {} is valid and not in use yet", inss);
