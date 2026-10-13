@@ -1,7 +1,7 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.AuthorMapper;
-import com.switchfully.digibookygroup3.api.BookMapper;
+import com.switchfully.digibookygroup3.mapper.AuthorMapper;
+import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;

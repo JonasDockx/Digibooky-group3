@@ -1,4 +1,4 @@
-package com.switchfully.digibookygroup3.api;
+package com.switchfully.digibookygroup3.mapper;
 
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
@@ -16,7 +16,7 @@ public class BookMapper {
         return new BookDTO(
                 book.getId(),
                 book.getTitle(),
-                book.getISBN(),
+                book.getIsbn(),
                 authorDto
         );
     }
