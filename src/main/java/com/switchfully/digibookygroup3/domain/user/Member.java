@@ -1,19 +1,14 @@
-package com.switchfully.digibookygroup3.domain.member;
+package com.switchfully.digibookygroup3.domain.user;
 
 import java.util.Objects;
-import java.util.UUID;
 
-public class Member {
-    private final String id;
+public class Member extends User{
     private final String inss;
-    private final String lastname;
-    private final String firstname;
-    private String email;
     private String streetName;
     private String streetNumber;
     private String postalCode;
     private String city;
-    private MemberType memberType;
+    private UserType userType;
 
     public Member(String inss,
                   String lastname,
@@ -23,20 +18,16 @@ public class Member {
                   String streetNumber,
                   String postalCode,
                   String city) {
-        this.id = UUID.randomUUID().toString();
+        super(lastname, firstname, email, UserType.MEMBER);
         this.inss = normalizeInss(inss).trim();
-        this.lastname = lastname;
-        this.firstname = firstname;
-        this.email = email.trim().toLowerCase();
         this.streetName = streetName;
         this.streetNumber = streetNumber;
         this.postalCode = postalCode;
         this.city = city;
-        this.memberType = MemberType.MEMBER;
     }
 
     public String getId() {
-        return id;
+        return super.getId();
     }
 
     public String getInss() {
@@ -44,15 +35,15 @@ public class Member {
     }
 
     public String getLastname() {
-        return lastname;
+        return super.getLastname();
     }
 
     public String getFirstname() {
-        return firstname;
+        return super.getFirstname();
     }
 
     public String getEmail() {
-        return email;
+        return super.getEmail();
     }
 
     public String getStreetName() {
@@ -71,8 +62,8 @@ public class Member {
         return city;
     }
 
-    public MemberType getMemberType() {
-        return memberType;
+    public UserType getMemberType() {
+        return userType;
     }
 
     private static String normalizeInss(String inss) {

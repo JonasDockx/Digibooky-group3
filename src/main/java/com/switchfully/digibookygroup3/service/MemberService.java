@@ -3,8 +3,8 @@ package com.switchfully.digibookygroup3.service;
 import com.switchfully.digibookygroup3.api.MemberMapper;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
-import com.switchfully.digibookygroup3.domain.member.Member;
-import com.switchfully.digibookygroup3.domain.member.MemberRepository;
+import com.switchfully.digibookygroup3.domain.user.Member;
+import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import com.switchfully.digibookygroup3.exceptions.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +17,12 @@ public class MemberService {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberService.class);
 
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
     private final MemberMapper memberMapper;
 
-    public MemberService(MemberRepository memberRepository, MemberMapper memberMapper) {
+    public MemberService(UserRepository userRepository, MemberMapper memberMapper) {
 
-        this.memberRepository = memberRepository;
+        this.userRepository = userRepository;
         this.memberMapper = memberMapper;
     }
 
@@ -37,13 +37,13 @@ public class MemberService {
                 dto.getPostalCode(),
                 dto.getCity()
         );
-        memberRepository.addMember(member);
+        userRepository.addMember(member);
         logger.info("Member created with id {}", member.getId());
         return member;
     }
 
     private String checkEmailUnique(String email) {
-        if (memberRepository.isEmailPresent(email.trim().toLowerCase())) {
+        if (userRepository.isEmailPresent(email.trim().toLowerCase())) {
             logger.error("Duplicate e-mail address");
             throw new UserAlreadyExistsException();
         }
@@ -52,7 +52,7 @@ public class MemberService {
     }
 
     private String checkINSSUnique(String inss) {
-        if (memberRepository.isINSSPresent(inss.trim())) {
+        if (userRepository.isINSSPresent(inss.trim())) {
             logger.error("Duplicate INSS number");
             throw new UserAlreadyExistsException();
         }
@@ -66,7 +66,7 @@ public class MemberService {
     }
 
     public List<MemberDTO> getMemberDTOs() {
-        List<Member> members = memberRepository.getAllMembers();
+        List<Member> members = userRepository.getAllMembers();
         logger.info("Fetching all members.");
         return memberMapper.mapMemberToMemberDTO(members);
     }

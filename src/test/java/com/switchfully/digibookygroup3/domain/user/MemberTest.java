@@ -1,4 +1,4 @@
-package com.switchfully.digibookygroup3.domain.member;
+package com.switchfully.digibookygroup3.domain.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MemberTest {
 
-    private final MemberRepository memberRepository = new MemberRepository();
+    private final UserRepository userRepository = new UserRepository();
 
     @BeforeEach
     void setUp() {
-        memberRepository.addMember(new Member(
+        userRepository.addMember(new Member(
                 "123456789",
                 "Dockx",
                 "Jonas",
@@ -21,7 +21,7 @@ class MemberTest {
                 "1234",
                 "Brussels"
         ));
-        memberRepository.addMember(new Member(
+        userRepository.addMember(new Member(
                 "234567890",
                 "Figueroa",
                 "Francisco",
@@ -36,28 +36,28 @@ class MemberTest {
 
     @Test
     void checkIfINSSIsAlreadyPresent_thenReturnTrue() {
-        boolean result = memberRepository.isINSSPresent("123456789");
+        boolean result = userRepository.isINSSPresent("123456789");
 
         assertTrue(result);
     }
 
     @Test
     void checkIfINSSIsNotPresent_thenReturnFalse() {
-        boolean result = memberRepository.isINSSPresent("000000");
+        boolean result = userRepository.isINSSPresent("000000");
 
         assertFalse(result);
     }
 
     @Test
     void checkIfEmailIsAlreadyPresent_thenReturnTrue() {
-        boolean result = memberRepository.isEmailPresent("jonas@test.com");
+        boolean result = userRepository.isEmailPresent("jonas@test.com");
 
         assertTrue(result);
     }
 
     @Test
     void checkIfEmailIsNotPresent_thenReturnFalse() {
-        boolean result = memberRepository.isEmailPresent("jonas@jonas.com");
+        boolean result = userRepository.isEmailPresent("jonas@jonas.com");
 
         assertFalse(result);
     }

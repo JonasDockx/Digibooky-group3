@@ -2,21 +2,21 @@ package com.switchfully.digibookygroup3.service;
 
 import com.switchfully.digibookygroup3.api.MemberMapper;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
-import com.switchfully.digibookygroup3.domain.member.Member;
-import com.switchfully.digibookygroup3.domain.member.MemberRepository;
+import com.switchfully.digibookygroup3.domain.user.Member;
+import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MemberServiceTest {
-    private final MemberRepository memberRepository = new MemberRepository();
+    private final UserRepository userRepository = new UserRepository();
     private final MemberMapper memberMapper = new MemberMapper();
-    private final MemberService memberService = new MemberService(memberRepository, memberMapper);
+    private final MemberService memberService = new MemberService(userRepository, memberMapper);
 
     @BeforeEach
     void setUp() {
-        memberRepository.addMember(new Member(
+        userRepository.addMember(new Member(
                 "123456789",
                 "Dockx",
                 "Jonas",
@@ -26,7 +26,7 @@ class MemberServiceTest {
                 "1234",
                 "Brussels"
         ));
-        memberRepository.addMember(new Member(
+        userRepository.addMember(new Member(
                         "234567890",
                         "Figueroa",
                         "Francisco",
@@ -55,7 +55,7 @@ class MemberServiceTest {
 
         Member result = memberService.addMember(member);
 
-        assertTrue(memberRepository.getAllMembers().contains(result));
-        assertEquals(3, memberRepository.getAllMembers().size());
+        assertTrue(userRepository.getAllMembers().contains(result));
+        assertEquals(3, userRepository.getAllMembers().size());
     }
 }

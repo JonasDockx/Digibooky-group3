@@ -2,7 +2,7 @@ package com.switchfully.digibookygroup3.api;
 
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
-import com.switchfully.digibookygroup3.domain.member.Member;
+import com.switchfully.digibookygroup3.domain.user.Member;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

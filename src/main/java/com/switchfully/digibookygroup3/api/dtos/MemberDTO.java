@@ -1,6 +1,6 @@
 package com.switchfully.digibookygroup3.api.dtos;
 
-import com.switchfully.digibookygroup3.domain.member.MemberType;
+import com.switchfully.digibookygroup3.domain.user.UserType;
 
 public class MemberDTO {
 
@@ -13,7 +13,7 @@ public class MemberDTO {
     private String streetNumber;
     private String postalCode;
     private String city;
-    private MemberType memberType;
+    private UserType userType;
 
     public MemberDTO(String id,
                      String inss,
@@ -24,7 +24,7 @@ public class MemberDTO {
                      String streetNumber,
                      String postalCode,
                      String city,
-                     MemberType memberType) {
+                     UserType userType) {
         this.id = id;
         this.inss = inss;
         this.lastname = lastname;
@@ -34,7 +34,7 @@ public class MemberDTO {
         this.streetNumber = streetNumber;
         this.postalCode = postalCode;
         this.city = city;
-        this.memberType = memberType;
+        this.userType = userType;
     }
 
     public String getId() {
@@ -73,7 +73,7 @@ public class MemberDTO {
         return city;
     }
 
-    public MemberType getMemberType() {
-        return memberType;
+    public UserType getMemberType() {
+        return userType;
     }
 }
