@@ -1,7 +1,8 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.AuthorMapper;
-import com.switchfully.digibookygroup3.api.BookMapper;
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
+import com.switchfully.digibookygroup3.mapper.AuthorMapper;
+import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
@@ -32,13 +33,19 @@ public class BookService {
     }
 
     public List<BookDTO> getAllBooks() {
-        logger.info("Received get all books request");
+        logger.info("Received getAllBooks request");
         List<Book> books = bookRepository.getAllBooks();
         logger.debug("Fetched books with size {}", books.size());
         return books
                 .stream()
                 .map(book -> mapToDto(book, book.getAuthorId()))
                 .toList();
+    }
+
+    public BookDTO getBookById(String id) {
+        logger.info("Received getBookById with id {}", id);
+        Book book = bookRepository.getBydId(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     private BookDTO mapToDto(Book book, String authorId) {
