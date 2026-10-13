@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Member {
     private final String id;
-    private final String INSS;
+    private final String inss;
     private final String lastname;
     private final String firstname;
     private String email;
@@ -14,7 +14,7 @@ public class Member {
     private String city;
     private MemberType memberType;
 
-    public Member(String INSS,
+    public Member(String inss,
                   String lastname,
                   String firstname,
                   String email,
@@ -23,7 +23,7 @@ public class Member {
                   String postalCode,
                   String city) {
         this.id = UUID.randomUUID().toString();
-        this.INSS = INSS;
+        this.inss = inss;
         this.lastname = lastname;
         this.firstname = firstname;
         this.email = email;
@@ -38,8 +38,8 @@ public class Member {
         return id;
     }
 
-    public String getINSS() {
-        return INSS;
+    public String getInss() {
+        return inss;
     }
 
     public String getLastname() {

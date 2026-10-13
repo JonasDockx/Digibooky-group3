@@ -24,7 +24,7 @@ public class MemberRepository {
 
     public boolean isINSSPresent(String inss) {
         return members.stream().
-                map(Member::getINSS).
+                map(Member::getInss).
                 anyMatch(each -> each.equals(inss));
     }
 

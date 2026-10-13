@@ -23,7 +23,7 @@ public class MemberService {
 
     public Member addMember(CreateMemberDTO dto) {
         Member member = new Member(
-                checkINSSUnique(dto.getINSS()),
+                checkINSSUnique(dto.getInss()),
                 dto.getLastname(),
                 dto.getFirstname(),
                 checkEmailUnique(dto.getEmail()),

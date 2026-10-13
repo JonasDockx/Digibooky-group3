@@ -6,14 +6,13 @@ import com.switchfully.digibookygroup3.domain.member.Member;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class MemberMapper {
 
     public Member mapDTOToMember(CreateMemberDTO createMemberDTO) {
         return new Member(
-                createMemberDTO.getINSS(),
+                createMemberDTO.getInss(),
                 createMemberDTO.getLastname(),
                 createMemberDTO.getFirstname(),
                 createMemberDTO.getEmail(),
@@ -26,7 +25,7 @@ public class MemberMapper {
     public MemberDTO mapMemberToMemberDTO(Member member) {
         return new MemberDTO(
                 member.getId(),
-                member.getINSS(),
+                member.getInss(),
                 member.getLastname(),
                 member.getFirstname(),
                 member.getEmail(),

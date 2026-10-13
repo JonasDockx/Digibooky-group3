@@ -1,12 +1,11 @@
 package com.switchfully.digibookygroup3.api.dtos;
 
-import com.switchfully.digibookygroup3.domain.member.MemberType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class CreateMemberDTO {
     @NotBlank
-    private final String INSS;
+    private final String inss;
     @NotBlank
     private final String lastname;
     private final String firstname;
@@ -19,7 +18,7 @@ public class CreateMemberDTO {
     @NotBlank
     private String city;
 
-    public CreateMemberDTO(String INSS,
+    public CreateMemberDTO(String inss,
                            String lastname,
                            String firstname,
                            String email,
@@ -27,7 +26,7 @@ public class CreateMemberDTO {
                            String streetNumber,
                            String postalCode,
                            String city) {
-        this.INSS = INSS;
+        this.inss = inss;
         this.lastname = lastname;
         this.firstname = firstname;
         this.email = email;
@@ -37,8 +36,8 @@ public class CreateMemberDTO {
         this.city = city;
     }
 
-    public String getINSS() {
-        return INSS;
+    public String getInss() {
+        return inss;
     }
 
     public String getLastname() {
