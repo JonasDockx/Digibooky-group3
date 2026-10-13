@@ -21,8 +21,7 @@ public class Member {
                   String streetName,
                   String streetNumber,
                   String postalCode,
-                  String city,
-                  MemberType memberType) {
+                  String city) {
         this.id = UUID.randomUUID().toString();
         this.INSS = INSS;
         this.lastname = lastname;
@@ -32,7 +31,7 @@ public class Member {
         this.streetNumber = streetNumber;
         this.postalCode = postalCode;
         this.city = city;
-        this.memberType = memberType;
+        this.memberType = MemberType.MEMBER;
     }
 
     public String getId() {

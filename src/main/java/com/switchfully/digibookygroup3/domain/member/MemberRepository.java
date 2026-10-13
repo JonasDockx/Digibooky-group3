@@ -22,4 +22,15 @@ public class MemberRepository {
         return members;
     }
 
+    public boolean isINSSUnique(String inss) {
+        return members.stream().
+                map(member -> member.getINSS()).
+                anyMatch(each -> each.equals(inss));
+    }
+
+    public boolean isEmailUnique(String email) {
+        return members.stream().
+                map(member -> member.getEmail()).
+                anyMatch(each -> each.equals(email));
+    }
 }

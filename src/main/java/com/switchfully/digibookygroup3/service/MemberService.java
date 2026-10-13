@@ -14,7 +14,32 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public Member addMember(CreateMemberDTO createMemberDTO) {
+    public Member addMember(CreateMemberDTO dto) {
+        Member member = new Member(
+                checkINSSUnique(dto.getINSS()),
+                dto.getLastname(),
+                dto.getFirstname(),
+                checkEmailUnique(dto.getEmail()),
+                dto.getStreetName(),
+                dto.getStreetNumber(),
+                dto.getPostalCode(),
+                dto.getCity()
+        );
+        memberRepository.addMember(member);
+        return member;
+    }
 
+    private String checkEmailUnique(String email) {
+        if(!memberRepository.isEmailUnique(email)){
+            throw  new RuntimeException();
+        }
+        return email;
+    }
+
+    private String checkINSSUnique(String inss) {
+        if(!memberRepository.isINSSUnique(inss)){
+            throw  new RuntimeException();
+        }
+        return inss;
     }
 }
