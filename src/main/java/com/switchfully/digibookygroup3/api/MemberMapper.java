@@ -5,6 +5,7 @@ import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.member.Member;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -34,5 +35,11 @@ public class MemberMapper {
                 member.getPostalCode(),
                 member.getCity(),
                 member.getMemberType());
+    }
+
+    public List<MemberDTO> mapMemberToMemberDTO(List<Member> members) {
+        return members.stream()
+                .map(this::mapMemberToMemberDTO)
+                .toList();
     }
 }
