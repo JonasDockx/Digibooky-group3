@@ -36,4 +36,6 @@ public class MemberController {
     public List<MemberDTO> getAllMembers() {
         return memberService.getMemberDTOs();
     }
+
+
 }
