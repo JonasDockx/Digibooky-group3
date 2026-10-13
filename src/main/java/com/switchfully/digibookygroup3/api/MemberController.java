@@ -3,12 +3,15 @@ package com.switchfully.digibookygroup3.api;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.member.Member;
+import com.switchfully.digibookygroup3.exceptions.UserAlreadyExistsException;
 import com.switchfully.digibookygroup3.service.MemberService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Members")
@@ -37,5 +40,10 @@ public class MemberController {
         return memberService.getMemberDTOs();
     }
 
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    protected void userAlreadyExistsException(UserAlreadyExistsException e,
+                                               HttpServletResponse response) throws IOException {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+    }
 
 }

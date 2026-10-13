@@ -5,7 +5,7 @@ import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.member.Member;
 import com.switchfully.digibookygroup3.domain.member.MemberRepository;
-import com.switchfully.digibookygroup3.exceptions.EmailAlreadyExistsException;
+import com.switchfully.digibookygroup3.exceptions.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,8 @@ public class MemberService {
 
     private String checkEmailUnique(String email) {
         if (memberRepository.isEmailPresent(email)) {
-            throw new EmailAlreadyExistsException(email);
+            logger.error("Email {} is invalid or already in use", email);
+            throw new UserAlreadyExistsException();
         }
         logger.info("E-mail address {} is valid and not in use yet", email);
         return email;
@@ -52,7 +53,8 @@ public class MemberService {
 
     private String checkINSSUnique(String inss) {
         if (memberRepository.isINSSPresent(inss)) {
-            throw new RuntimeException();
+            logger.error("INSS number {} is invalid or already in use", inss);
+            throw new UserAlreadyExistsException();
         }
         logger.info("INSS number {} is valid and not in use yet", inss);
         return inss;
