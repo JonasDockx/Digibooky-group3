@@ -9,6 +9,7 @@ public class Book {
         private String authorId;
         private boolean isAvailable;
         private boolean isArchived;
+        private String summary;
 
         public Book(String isbn, String title, String authorId) {
                 this.id = UUID.randomUUID().toString();
@@ -16,6 +17,14 @@ public class Book {
                 this.title = title;
                 this.authorId = authorId;
                 this.isAvailable = true;
+        }
+        public Book(String isbn, String title, String authorId, String summary) {
+                this.id = UUID.randomUUID().toString();
+                this.isbn = isbn;
+                this.title = title;
+                this.authorId = authorId;
+                this.isAvailable = true;
+                this.summary = summary;
         }
 
         public String getId() {
