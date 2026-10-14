@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 public class BookService {
-    private final Logger logger = LoggerFactory.getLogger(BookRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(BookService.class);
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
@@ -43,24 +43,25 @@ public class BookService {
                 .toList();
     }
 
-    public BookDTO getBookById(String id) {
-        logger.info("Received getBookById with id {}", id);
+    public BookWithSummaryDTO getBookById(String id) {
+        logger.info("Received getBookById request with id {}", id);
         Book book = bookRepository.getBydId(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
+        AuthorDTO authorDTO = getAuthorDTOById(book.getAuthorId());
+        logger.debug("Fetched book with id {}", id);
 
-        return mapToDto(book);
-
+        return bookMapper.toWithSummaryDto(book, authorDTO);
     }
 
     private BookDTO mapToDto(Book book) {
 //        In order to build the book DTO, we also need the author DTO. This function assembles
 //        the book DTO and author DTO
-        AuthorDTO authorDTO = authorMapper.toDto(getAuthorById(book.getAuthorId()));
-        return bookMapper.toDto(book, authorDTO);
+        return bookMapper.toDto(book, getAuthorDTOById(book.getAuthorId()));
     }
 
-    private Author getAuthorById(String id) {
-        return authorRepository.getById(id)
+    private AuthorDTO getAuthorDTOById(String id) {
+        Author author = authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
+        return authorMapper.toDto(author);
     }
 }

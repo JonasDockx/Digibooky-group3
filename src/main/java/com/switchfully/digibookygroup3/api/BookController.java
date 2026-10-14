@@ -27,7 +27,7 @@ public class BookController {
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON)
     @ResponseStatus(HttpStatus.OK)
-    public BookDTO showBookDetails(@PathVariable("id") String id) {
+    public BookWithSummaryDTO showBookDetails(@PathVariable("id") String id) {
         return bookService.getBookById(id);
     }
 

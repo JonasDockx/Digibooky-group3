@@ -22,7 +22,7 @@ public class BookMapper {
         );
     }
 
-    public BookDTO toDto(Book book, AuthorDTO authorDto, String summary) {
+    public BookWithSummaryDTO toWithSummaryDto(Book book, AuthorDTO authorDto) {
         if (book == null || authorDto == null) {
             return null;
         }
@@ -32,7 +32,7 @@ public class BookMapper {
                 book.getTitle(),
                 book.getIsbn(),
                 authorDto,
-                summary
+                book.getSummary()
         );
     }
 

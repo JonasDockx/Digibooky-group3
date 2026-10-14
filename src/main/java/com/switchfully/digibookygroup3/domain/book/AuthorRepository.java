@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class AuthorRepository {
-    private Map<String, Author> authors;
+    private final Map<String, Author> authors;
 
     public AuthorRepository() {
         this.authors = new ConcurrentHashMap<>();

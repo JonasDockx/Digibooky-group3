@@ -1,5 +1,7 @@
 package com.switchfully.digibookygroup3.service;
 
+import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
@@ -24,6 +26,8 @@ class BookServiceTest {
     private BookService bookService;
     private BookRepository bookRepositoryMock;
     private AuthorRepository authorRepositoryMock;
+    private List<Author> authors;
+    private List<Book> books;
 
     @BeforeEach
     void setup() {
@@ -31,17 +35,14 @@ class BookServiceTest {
         authorRepositoryMock = mock(AuthorRepository.class);
         bookService = new BookService(bookRepositoryMock, authorRepositoryMock,
                 new BookMapper(), new AuthorMapper());
+        addAuthorsAndBooks();
     }
 
     @Test
     void getAll_givenFilledRepositories_whenGetAllBooks_thenReturnsAllBookDTOs() {
-        List<Author> authors = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
-                new Author("a2_firstname", "a2_lastname")));
         String firstAuthorId = authors.get(0).getId();
         String secondAuthorId = authors.get(1).getId();
 
-        List<Book> books = new LinkedList<>(List.of(new Book("ISBN1", "title1", firstAuthorId),
-                new Book("ISBN2", "title2", secondAuthorId)));
         when(bookRepositoryMock.getAllBooks())
                 .thenReturn(books);
         when(authorRepositoryMock.getById(firstAuthorId))
@@ -66,7 +67,7 @@ class BookServiceTest {
 
     @Test
     void getAll_givenBooksWithInvalidAuthorId_whenGetAllBooks_thenThrowsAuthorNotFoundException() {
-        List<Book> books = new LinkedList<>(List.of(new Book("ISBN1", "title1", "invalidId")));
+        books = new LinkedList<>(List.of(new Book("ISBN1", "title1", "invalidId", "Summary")));
 
         when(bookRepositoryMock.getAllBooks())
                 .thenReturn(books);
@@ -78,17 +79,38 @@ class BookServiceTest {
 
     @Test
     void getBookById_givenAValidIdOfBookWithSummary_whenGetBookById_thenReturnBookDtoWithAllDetailsOfTheBook() {
-        throw new UnsupportedOperationException();
+        Author author = authors.get(0);
+        Book book = books.get(0);
+
+        when(bookRepositoryMock.getBydId(book.getId()))
+                .thenReturn(Optional.of(book));
+        when(authorRepositoryMock.getById(author.getId()))
+                .thenReturn(Optional.of(author));
+
+        BookWithSummaryDTO bookWithSummaryDTO = bookService.getBookById(book.getId());
+
+        verify(bookRepositoryMock).getBydId(book.getId());
+        verify(authorRepositoryMock).getById(author.getId());
+
+        assertThat(bookWithSummaryDTO).isNotNull();
+        assertThat(bookWithSummaryDTO).isEqualTo(new BookWithSummaryDTO(
+                book.getId(), book.getTitle(), book.getIsbn(),
+                new AuthorDTO(author.getId(), author.getFirstname(), author.getLastname()),
+                book.getSummary()
+        ));
     }
 
     @Test
-    void getBookById_givenAValidIdOfBookWithoutSummary_whenCalled_thenDisplayAnEmptyValueForTheSummary() {
-        throw new UnsupportedOperationException();
+    void getBookById_givenAnInvalidId_whenCalled_thenReturnBookNotFoundException() {
+        assertThatThrownBy(() -> bookService.getBookById("InvalidBookId"))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Book not found with id InvalidBookId");
     }
 
-
-    @Test
-    void getBookById_givenAnInvalidId_whenCalled_thenReturnHttpNotFoundError() {
-        throw new UnsupportedOperationException();
-        }
+    private void addAuthorsAndBooks() {
+        authors = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
+                new Author("a2_firstname", "a2_lastname")));
+        books = new LinkedList<>(List.of(new Book("ISBN1", "title1", authors.get(0).getId(), "Summary1"),
+                new Book("ISBN2", "title2", authors.get(1).getId(), "Summary2")));
     }
+}

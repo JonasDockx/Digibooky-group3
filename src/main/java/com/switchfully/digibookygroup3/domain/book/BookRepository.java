@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class BookRepository {
-    private Map<String, Book> books;
+    private final Map<String, Book> books;
 
     public BookRepository() {
         this.books = new ConcurrentHashMap<>();

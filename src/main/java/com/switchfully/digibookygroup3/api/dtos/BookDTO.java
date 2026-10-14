@@ -1,5 +1,7 @@
 package com.switchfully.digibookygroup3.api.dtos;
 
+import java.util.Objects;
+
 public class BookDTO {
     private final String id;
     private final String title;
@@ -29,6 +31,16 @@ public class BookDTO {
         return authorDTO;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BookDTO bookDTO = (BookDTO) o;
+        return Objects.equals(id, bookDTO.id) && Objects.equals(title, bookDTO.title) && Objects.equals(isbn, bookDTO.isbn) && Objects.equals(authorDTO, bookDTO.authorDTO);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, isbn, authorDTO);
+    }
 }
 

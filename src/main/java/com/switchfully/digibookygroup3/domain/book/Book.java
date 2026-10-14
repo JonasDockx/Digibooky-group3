@@ -6,24 +6,18 @@ public class Book {
         private final String id;
         private final String isbn;
         private final String title;
-        private String authorId;
+        private final String authorId;
         private boolean isAvailable;
         private boolean isArchived;
         private String summary;
 
-        public Book(String isbn, String title, String authorId) {
-                this.id = UUID.randomUUID().toString();
-                this.isbn = isbn;
-                this.title = title;
-                this.authorId = authorId;
-                this.isAvailable = true;
-        }
         public Book(String isbn, String title, String authorId, String summary) {
                 this.id = UUID.randomUUID().toString();
                 this.isbn = isbn;
                 this.title = title;
                 this.authorId = authorId;
                 this.isAvailable = true;
+                this.isArchived = false;
                 this.summary = summary;
         }
 
@@ -41,5 +35,9 @@ public class Book {
 
         public String getAuthorId() {
                 return authorId;
+        }
+
+        public String getSummary() {
+                return summary;
         }
 }
