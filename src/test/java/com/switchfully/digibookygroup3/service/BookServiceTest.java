@@ -86,9 +86,9 @@ class BookServiceTest {
         throw new UnsupportedOperationException();
     }
 
-    }
 
     @Test
     void getBookById_givenAnInvalidId_whenCalled_thenReturnHttoNotFoundError() {
         throw new UnsupportedOperationException();
+        }
     }
