@@ -13,10 +13,12 @@ public class UserRepository {
 
     public UserRepository() {
         users = new ConcurrentHashMap<>();
+//        As requested, an admin exists on startup.
+        addUser(new Admin("admin", "admin", "admin@admin.com"));
     }
 
-    public void addMember(Member member) {
-        users.put(member.getId(), member);
+    public void addUser(User user) {
+        users.put(user.getId(), user);
     }
 
     public List<Member> getAllMembers() {
