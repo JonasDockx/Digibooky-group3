@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -89,5 +91,36 @@ class BookControllerIntegrationTest {
         String errorMessage = showBookDetailsForNonExistingBook();
 
         assertEquals("Book not found with id 123", errorMessage);
+    }
+
+    @Test
+    void getBookByISBNReturnsTheBook() {
+        addBooksAndAuthors();
+        Author author = new Author("Test", "Test");
+        authorRepository.addAuthor(author);
+        bookRepository.addBook(new Book("987654321", "Test", author.getId(), "Test summary"));
+
+        BookDTO[] filteredBooks = RestAssured.given()
+                .port(port)
+                .get("/books/search?isbn=*543*")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(BookDTO[].class);
+
+        assertEquals(1, filteredBooks.length);
+    }
+
+    @Test
+    void getBookByISBNReturnsEmptyListWhenISBNIsNotPresent() {
+        addBooksAndAuthors();
+
+        BookDTO[] filteredBooks = RestAssured.given()
+                .port(port)
+                .get("/books/search?isbn=*543*")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(BookDTO[].class);
+
+        assertEquals(0, filteredBooks.length);
     }
 }

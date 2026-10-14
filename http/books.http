@@ -2,3 +2,5 @@
 GET http://localhost:8080/books
 ###
 GET http://localhost:8080/books/wrongId
+###
+GET http://localhost:8080/books/search?isbn=123*

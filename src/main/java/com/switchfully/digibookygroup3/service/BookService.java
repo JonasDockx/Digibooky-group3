@@ -1,16 +1,16 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
-import com.switchfully.digibookygroup3.exception.BookNotFoundException;
-import com.switchfully.digibookygroup3.mapper.AuthorMapper;
-import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
+import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
 import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
+import com.switchfully.digibookygroup3.mapper.AuthorMapper;
+import com.switchfully.digibookygroup3.mapper.BookMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -58,12 +58,19 @@ public class BookService {
     }
 
     private BookWithSummaryDTO mapToDtoWithSummary(Book book) {
-        return  bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
+        return bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
     }
 
     private AuthorDTO getAuthorDTOById(String id) {
         Author author = authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
         return authorMapper.toDto(author);
+    }
+
+    public List<BookDTO> getBookByISBN(String isbn) {
+        return bookRepository.getBooksByISBNNumber(isbn)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
     }
 }

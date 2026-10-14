@@ -113,4 +113,62 @@ class BookServiceTest {
         books = new LinkedList<>(List.of(new Book("ISBN1", "title1", authors.get(0).getId(), "Summary1"),
                 new Book("ISBN2", "title2", authors.get(1).getId(), "Summary2")));
     }
+
+    @Test
+    void getBookByISBNShouldReturnAListOfBooksWithTheExactISBNNumber() {
+        Author author = authors.get(0);
+        Book book = books.get(0);
+
+        when(bookRepositoryMock.getBooksByISBNNumber("ISBN1"))
+                .thenReturn(List.of(book));
+        when(authorRepositoryMock.getById(author.getId()))
+                .thenReturn(Optional.of(author));
+
+        List<BookDTO> filteredList = bookService.getBookByISBN("ISBN1");
+
+        assertThat(filteredList).hasSize(1);
+    }
+
+    @Test
+    void getBookByISBNShouldReturnAListOfBooksContainingThatISBNNumber() {
+
+        when(bookRepositoryMock.getBooksByISBNNumber("IS*"))
+                .thenReturn(books);
+        when(authorRepositoryMock.getById(authors.get(0).getId()))
+                .thenReturn(Optional.of(authors.get(0)));
+        when(authorRepositoryMock.getById(authors.get(1).getId()))
+                .thenReturn(Optional.of(authors.get(1)));
+
+        List<BookDTO> filteredList = bookService.getBookByISBN("IS*");
+
+        assertThat(filteredList)
+                .hasSize(2)
+                .extracting(BookDTO::getIsbn)
+                .containsOnly("ISBN1", "ISBN2");
+    }
+
+    @Test
+    void getBookByISBNShouldReturnAListOfBooksContainingTheEndThatISBNNumber() {
+
+        when(bookRepositoryMock.getBooksByISBNNumber("*BN*"))
+                .thenReturn(books);
+        when(authorRepositoryMock.getById(authors.get(0).getId()))
+                .thenReturn(Optional.of(authors.get(0)));
+        when(authorRepositoryMock.getById(authors.get(1).getId()))
+                .thenReturn(Optional.of(authors.get(1)));
+
+        List<BookDTO> filteredList = bookService.getBookByISBN("*BN*");
+
+        assertThat(filteredList)
+                .hasSize(2)
+                .extracting(BookDTO::getIsbn)
+                .containsOnly("ISBN1", "ISBN2");
+    }
+
+    @Test
+    void getBookByISBNShouldReturnAnEmptyList() {
+        List<BookDTO> filteredList = bookService.getBookByISBN("IS*");
+
+        assertThat(filteredList).isEmpty();
+    }
 }
