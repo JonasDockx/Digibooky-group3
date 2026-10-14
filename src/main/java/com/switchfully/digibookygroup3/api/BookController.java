@@ -1,6 +1,7 @@
 package com.switchfully.digibookygroup3.api;
 
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
+import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

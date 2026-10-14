@@ -7,4 +7,5 @@ public class BookWithSummaryDTO extends BookDTO {
         super(id, title, isbn, authorDTO);
         this.summary = summary;
     }
+
 }
