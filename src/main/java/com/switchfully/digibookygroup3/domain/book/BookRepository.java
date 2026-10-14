@@ -19,6 +19,10 @@ public class BookRepository {
         return List.copyOf(books.values());
     }
 
+    public void addBook(Book book) {
+        books.put(book.getId(), book);
+    }
+
     public Optional<Book> getBydId(String id) {
         return Optional.ofNullable(books.get(id));
     }

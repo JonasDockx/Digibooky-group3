@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping(value = "/books")
 @RestController
 public class BookController {
-    private static final String APPLICATION_JSON = "applciation/json";
+    private static final String APPLICATION_JSON = "application/json";
 
     private final BookService bookService;
 

@@ -14,6 +14,10 @@ public class AuthorRepository {
         this.authors = new ConcurrentHashMap<>();
     }
 
+    public void addAuthor(Author author) {
+        authors.put(author.getId(), author);
+    }
+
     public Optional<Author> getById(String id) {
         return Optional.ofNullable(authors.get(id));
     }
