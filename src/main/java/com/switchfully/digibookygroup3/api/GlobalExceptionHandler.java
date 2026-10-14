@@ -1,5 +1,7 @@
 package com.switchfully.digibookygroup3.api;
 
+import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,4 +35,17 @@ public class GlobalExceptionHandler {
         logger.warn("Validation failed: {}", errors.keySet());
         return ResponseEntity.badRequest().body(errors);
     }
+
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<String> handleBookNotFoundException(BookNotFoundException e) {
+        logger.warn(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public ResponseEntity<String> handleAuthorNotFoundException(AuthorNotFoundException e) {
+        logger.warn(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
 }
