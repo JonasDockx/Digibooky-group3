@@ -16,8 +16,9 @@ public class Member extends User{
                   String streetName,
                   String streetNumber,
                   String postalCode,
-                  String city) {
-        super(lastname, firstname, email, UserType.MEMBER);
+                  String city,
+                  String password) {
+        super(lastname, firstname, email, UserType.MEMBER, password);
         this.inss = inss;
 //        this.inss = normalizeInss(inss).trim();
         this.streetName = streetName;

@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MemberServiceTest {
+class UserServiceTest {
     private final UserRepository userRepository = new UserRepository();
     private final MemberMapper memberMapper = new MemberMapper();
-    private final MemberService memberService = new MemberService(userRepository, memberMapper);
+    private final UserService userService = new UserService(userRepository, memberMapper);
 
     @BeforeEach
     void setUp() {
-        userRepository.addMember(new Member(
+        userRepository.addUser(new Member(
                 "123456789",
                 "Dockx",
                 "Jonas",
@@ -24,9 +24,10 @@ class MemberServiceTest {
                 "Street street",
                 "123",
                 "1234",
-                "Brussels"
+                "Brussels",
+                "oenzfo"
         ));
-        userRepository.addMember(new Member(
+        userRepository.addUser(new Member(
                         "234567890",
                         "Figueroa",
                         "Francisco",
@@ -34,7 +35,8 @@ class MemberServiceTest {
                         "Street street",
                         "345",
                         "1234",
-                        "Brussels"
+                        "Brussels",
+                        "efboze"
                 )
         );
     }
@@ -49,11 +51,12 @@ class MemberServiceTest {
                 "Test Street",
                 "123",
                 "3456",
-                "Brussels");
+                "Brussels",
+                "ékjbfzeo"
+        );
 
 
-
-        Member result = memberService.addMember(member);
+        Member result = userService.addMember(member);
 
         assertTrue(userRepository.getAllMembers().contains(result));
         assertEquals(3, userRepository.getAllMembers().size());

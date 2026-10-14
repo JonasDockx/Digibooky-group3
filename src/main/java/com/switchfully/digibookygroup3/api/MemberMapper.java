@@ -19,7 +19,8 @@ public class MemberMapper {
                 createMemberDTO.getStreetName(),
                 createMemberDTO.getStreetNumber(),
                 createMemberDTO.getPostalCode(),
-                createMemberDTO.getCity());
+                createMemberDTO.getCity(),
+                createMemberDTO.getPassword());
     }
 
     public MemberDTO mapMemberToMemberDTO(Member member) {

@@ -13,14 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MemberService {
+public class UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MemberService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final MemberMapper memberMapper;
 
-    public MemberService(UserRepository userRepository, MemberMapper memberMapper) {
+    public UserService(UserRepository userRepository, MemberMapper memberMapper) {
 
         this.userRepository = userRepository;
         this.memberMapper = memberMapper;
@@ -35,9 +35,10 @@ public class MemberService {
                 dto.getStreetName(),
                 dto.getStreetNumber(),
                 dto.getPostalCode(),
-                dto.getCity()
+                dto.getCity(),
+                dto.getPassword()
         );
-        userRepository.addMember(member);
+        userRepository.addUser(member);
         logger.info("Member created with id {}", member.getId());
         return member;
     }
