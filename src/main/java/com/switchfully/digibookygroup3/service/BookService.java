@@ -47,16 +47,18 @@ public class BookService {
         logger.info("Received getBookById request with id {}", id);
         Book book = bookRepository.getBydId(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
-        AuthorDTO authorDTO = getAuthorDTOById(book.getAuthorId());
-        logger.debug("Fetched book with id {}", id);
 
-        return bookMapper.toWithSummaryDto(book, authorDTO);
+        return mapToDtoWithSummary(book);
     }
 
     private BookDTO mapToDto(Book book) {
 //        In order to build the book DTO, we also need the author DTO. This function assembles
 //        the book DTO and author DTO
         return bookMapper.toDto(book, getAuthorDTOById(book.getAuthorId()));
+    }
+
+    private BookWithSummaryDTO mapToDtoWithSummary(Book book) {
+        return  bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
     }
 
     private AuthorDTO getAuthorDTOById(String id) {

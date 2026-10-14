@@ -22,7 +22,7 @@ public class BookMapper {
         );
     }
 
-    public BookWithSummaryDTO toWithSummaryDto(Book book, AuthorDTO authorDto) {
+    public BookWithSummaryDTO toDtoWithSummary(Book book, AuthorDTO authorDto) {
         if (book == null || authorDto == null) {
             return null;
         }
