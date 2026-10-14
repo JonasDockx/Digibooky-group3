@@ -88,7 +88,7 @@ class BookServiceTest {
 
 
     @Test
-    void getBookById_givenAnInvalidId_whenCalled_thenReturnHttoNotFoundError() {
+    void getBookById_givenAnInvalidId_whenCalled_thenReturnHttpNotFoundError() {
         throw new UnsupportedOperationException();
         }
     }
