@@ -2,7 +2,6 @@ package com.switchfully.digibookygroup3.domain.user;
 
 import org.springframework.stereotype.Repository;
 
-import javax.swing.plaf.metal.MetalMenuBarUI;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +13,7 @@ public class UserRepository {
 
     public UserRepository() {
         users = new ConcurrentHashMap<>();
+        resetMembers();
     }
 
     public void addUser(User user) {
@@ -53,5 +53,11 @@ public class UserRepository {
     public boolean passMatch(String id, String password) {
         return users.get(id).getPassword().equals(password);
 
+    }
+
+    public void resetMembers() {
+        users.clear();
+        //        As requested, an admin exists on startup.
+        addUser(new Admin("admin", "admin", "admin@admin.com", "pass"));
     }
 }
