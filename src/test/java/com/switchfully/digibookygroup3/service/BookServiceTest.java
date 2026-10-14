@@ -76,4 +76,19 @@ class BookServiceTest {
                         .hasMessage("Author not found with id invalidId");
     }
 
-}
+    @Test
+    void getBookById_givenAValidIdOfBookWithSummary_whenGetBookById_thenReturnBookDtoWithAllDetailsOfTheBook() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Test
+    void getBookById_givenAValidIdOfBookWithoutSummary_whenCalled_thenDisplayAnEmptyValueForTheSummary() {
+        throw new UnsupportedOperationException();
+    }
+
+    }
+
+    @Test
+    void getBookById_givenAnInvalidId_whenCalled_thenReturnHttoNotFoundError() {
+        throw new UnsupportedOperationException();
+    }
