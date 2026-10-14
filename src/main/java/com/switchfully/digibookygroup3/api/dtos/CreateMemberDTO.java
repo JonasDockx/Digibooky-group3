@@ -18,6 +18,8 @@ public class CreateMemberDTO {
     private String postalCode;
     @NotBlank
     private String city;
+    @NotBlank
+    private final String password;
 
     public CreateMemberDTO(String inss,
                            String lastname,
@@ -26,7 +28,8 @@ public class CreateMemberDTO {
                            String streetName,
                            String streetNumber,
                            String postalCode,
-                           String city) {
+                           String city,
+                           String password) {
         this.inss = inss;
         this.lastname = lastname;
         this.firstname = firstname;
@@ -35,6 +38,7 @@ public class CreateMemberDTO {
         this.streetNumber = streetNumber;
         this.postalCode = postalCode;
         this.city = city;
+        this.password = password;
     }
 
     public String getInss() {
@@ -69,4 +73,5 @@ public class CreateMemberDTO {
         return city;
     }
 
+    public String getPassword() { return password; }
 }

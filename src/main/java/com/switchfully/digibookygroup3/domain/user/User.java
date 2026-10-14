@@ -28,12 +28,22 @@ public abstract class User {
     private final String firstname;
     private String email;
     private UserType userType;
+    private String password;
 
-    public User(String lastname, String firstname, String email, UserType userType) {
+    public User(String lastname, String firstname, String email, UserType userType, String password) {
         this.id = UUID.randomUUID().toString();
         this.lastname = lastname;
         this.firstname = firstname;
         this.email = email;
         this.userType = userType;
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean canHaveAccessTo(Feature feature) {
+        return userType.containsFeature(feature);
     }
 }
