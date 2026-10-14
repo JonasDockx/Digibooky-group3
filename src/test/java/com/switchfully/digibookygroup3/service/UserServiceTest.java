@@ -5,24 +5,117 @@ import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.user.Member;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
-import io.restassured.common.mapper.TypeRef;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserServiceTest {
+
+    @LocalServerPort
+    private int port;
     private final static String ADMIN_USERNAME = "admin@admin.com";
     private final static String ADMIN_PASSWORD = "pass";
 
-    private final UserRepository userRepository = new UserRepository();
-    private final MemberMapper memberMapper = new MemberMapper();
-    private final UserService userService = new UserService(userRepository, memberMapper);
+    @Autowired
+    private UserRepository userRepository;
 
+    @BeforeEach
+    public void setupUserRepository() {
+
+        userRepository.resetMembers();
+
+        for(int i = 0; i < 4; ++i){
+            userRepository.addUser(
+                    new Member(
+                            "member" + i,
+                            "member" + i,
+                            "member" + i,
+                            "member" + i + "@member.com",
+                            "member" + i,
+                            "member" + i,
+                            "member" + i,
+                            "member" + i,
+                            "pass")
+            );
+        }
+    }
+
+    @Test
+    void givenTheCorrectRequestForAddingAMember_thenMemberAddedResponse201(){
+        CreateMemberDTO newMember =
+                new CreateMemberDTO(
+                        "member",
+                        "member",
+                        "member",
+                        "member@member.com",
+                        "member",
+                        "member",
+                        "member",
+                        "member",
+                        "pass"
+                );
+
+                given()
+                .contentType(ContentType.JSON)
+                .body(newMember)
+                .when()
+                .post("http://localhost:" + port + "/members")
+                .then()
+                .statusCode(201);
+
+        assertThat(userRepository.getUserByEmail("member@member.com")).isPresent();
+        assertThat(userRepository.getAllMembers()).hasSize(5);
+
+        MemberDTO[] members = given()
+                .auth()
+                .preemptive()
+                .basic(ADMIN_USERNAME, ADMIN_PASSWORD)
+                .when()
+                .get("http://localhost:" + port + "/members")
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(MemberDTO[].class);
+
+        assertThat(members)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(5);
+
+        given()
+                .auth()
+                .preemptive()
+                .basic("member@member.com", "pass")
+                .when()
+                .get("http://localhost:" + port + "/members")
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    void getAllMembers_whenGivenARepositoryOfFourMembers_thenReturnArrayOfFourMembers() {
+        MemberDTO[] members = given()
+                .auth()
+                .preemptive()
+                .basic(ADMIN_USERNAME, ADMIN_PASSWORD)
+                .when()
+                .get("http://localhost:" + port + "/members")
+                .then()
+                .statusCode(200)
+            .extract()
+                .as(MemberDTO[].class);
+
+            assertThat(members)
+                    .isNotNull()
+                    .isNotEmpty()
+                    .hasSize(4);
+    }
 
     @Test
     void getAllMembers_givenTheRightCredentials_thenResponseIs200() {
@@ -31,7 +124,7 @@ class UserServiceTest {
                 .preemptive()
                 .basic(ADMIN_USERNAME, ADMIN_PASSWORD)
                 .when()
-                .get("http://localhost:8080/members")
+                .get("http://localhost:" + port + "/members")
                 .then()
                 .statusCode(200);
     }
@@ -43,65 +136,20 @@ class UserServiceTest {
                 .preemptive()
                 .basic(ADMIN_USERNAME, "lknkdfg")
                 .when()
-                .get("http://localhost:8080/members")
+                .get("http://localhost:" + port + "/members")
                 .then()
                 .statusCode(401);
     }
 
-
-
-//                .extract()
-//                .as(MemberDTO[].class);
-//
-//        assertThat(members)
-//                .isNotNull()
-//                .isNotEmpty()
-//                .hasSize(1);
-
-    @BeforeEach
-    void setUp() {
-        userRepository.addUser(new Member(
-                "123456789",
-                "Dockx",
-                "Jonas",
-                "jonas@test.com",
-                "Street street",
-                "123",
-                "1234",
-                "Brussels",
-                "oenzfo"
-        ));
-        userRepository.addUser(new Member(
-                        "234567890",
-                        "Figueroa",
-                        "Francisco",
-                        "francisco@test.com",
-                        "Street street",
-                        "345",
-                        "1234",
-                        "Brussels",
-                        "efboze"
-                )
-        );
-    }
-
     @Test
-    void checkIfThirdAddedMemberIsAddedToRepository() {
-        CreateMemberDTO member = new CreateMemberDTO(
-                "345678901",
-                "Martens",
-                "Matthieu",
-                "Matthieu@Test.com",
-                "Test Street",
-                "123",
-                "3456",
-                "Brussels",
-                "ékjbfzeo"
-        );
-
-        Member result = userService.addMember(member);
-
-        assertTrue(userRepository.getAllMembers().contains(result));
-        assertEquals(4, userRepository.getAllMembers().size());
+    void getAllMembers_givenTheRightCredentialsButNotAdmin_thenResponseIs403() {
+        given()
+                .auth()
+                .preemptive()
+                .basic("member1@member.com", "pass")
+                .when()
+                .get("http://localhost:" + port + "/members")
+                .then()
+                .statusCode(403);
     }
 }

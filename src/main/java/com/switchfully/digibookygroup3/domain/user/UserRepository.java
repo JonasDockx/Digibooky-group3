@@ -13,18 +13,7 @@ public class UserRepository {
 
     public UserRepository() {
         users = new ConcurrentHashMap<>();
-//        As requested, an admin exists on startup.
-        addUser(new Admin("admin", "admin", "admin@admin.com", "pass"));
-        addUser(new Member(
-                "member",
-                "member",
-                "member",
-                "member@member.com",
-                "member",
-                "member",
-                "member",
-                "member",
-                "pass"));
+        resetMembers();
     }
 
     public void addUser(User user) {
@@ -64,5 +53,11 @@ public class UserRepository {
     public boolean passMatch(String id, String password) {
         return users.get(id).getPassword().equals(password);
 
+    }
+
+    public void resetMembers() {
+        users.clear();
+        //        As requested, an admin exists on startup.
+        addUser(new Admin("admin", "admin", "admin@admin.com", "pass"));
     }
 }
