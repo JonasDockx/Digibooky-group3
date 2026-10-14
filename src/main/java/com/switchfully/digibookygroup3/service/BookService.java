@@ -1,5 +1,6 @@
 package com.switchfully.digibookygroup3.service;
 
+import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
@@ -38,7 +39,7 @@ public class BookService {
         logger.debug("Fetched books with size {}", books.size());
         return books
                 .stream()
-                .map(book -> mapToDto(book, book.getAuthorId()))
+                .map(this::mapToDto)
                 .toList();
     }
 
@@ -47,16 +48,13 @@ public class BookService {
         Book book = bookRepository.getBydId(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
 
-        Author author = authorRepository.getById(book.getAuthorId())
-                .orElseThrow(() -> new AuthorNotFoundException(book.getAuthorId()));
+        return mapToDto(book);
 
-        return bookMapper.toDto(
-                book,
-                authorMapper.toDto(author)
-        );
     }
 
     private BookDTO mapToDto(Book book) {
+//        In order to build the book DTO, we also need the author DTO. This function assembles
+//        the book DTO and author DTO
         AuthorDTO authorDTO = authorMapper.toDto(getAuthorById(book.getAuthorId()));
         return bookMapper.toDto(book, authorDTO);
     }
