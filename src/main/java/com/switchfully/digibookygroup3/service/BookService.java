@@ -46,10 +46,18 @@ public class BookService {
         logger.info("Received getBookById with id {}", id);
         Book book = bookRepository.getBydId(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
+
+        Author author = authorRepository.getById(book.getAuthorId())
+                .orElseThrow(() -> new AuthorNotFoundException(book.getAuthorId()));
+
+        return bookMapper.toDto(
+                book,
+                authorMapper.toDto(author)
+        );
     }
 
-    private BookDTO mapToDto(Book book, String authorId) {
-        AuthorDTO authorDTO = authorMapper.toDto(getAuthorById(authorId));
+    private BookDTO mapToDto(Book book) {
+        AuthorDTO authorDTO = authorMapper.toDto(getAuthorById(book.getAuthorId()));
         return bookMapper.toDto(book, authorDTO);
     }
 
