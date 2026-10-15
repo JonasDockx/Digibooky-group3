@@ -1,8 +1,5 @@
-package com.switchfully.digibookygroup3.api;
+package com.switchfully.digibookygroup3.exception;
 
-import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
-import com.switchfully.digibookygroup3.exception.BookNotFoundException;
-import com.switchfully.digibookygroup3.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
