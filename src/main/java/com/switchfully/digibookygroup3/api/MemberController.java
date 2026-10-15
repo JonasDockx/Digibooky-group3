@@ -47,7 +47,6 @@ public class MemberController {
     @ResponseStatus(HttpStatus.CREATED)
     public LibrarianDTO createLibrarian(@RequestHeader(value = "Authorization", required = false) String authorization, @Valid @RequestBody CreateLibrarianDTO dto) {
         securityService.validateAuthorization(authorization, Feature.REGISTER_LIBRARIAN);
-        User created = userService.addLibrarian(dto);
-        return userService.toLibrarianDTO(created);
+        return userService.addLibrarian(dto);
     }
 }

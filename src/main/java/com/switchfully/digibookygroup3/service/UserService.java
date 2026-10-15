@@ -79,14 +79,14 @@ public class UserService {
         return memberMapper.mapMemberToMemberDTO(members);
     }
 
-    public User addLibrarian(@Valid CreateLibrarianDTO dto) {
+    public LibrarianDTO addLibrarian(@Valid CreateLibrarianDTO dto) {
         User librarian = librarianMapper.mapDTOToLibrarian(dto);
         userRepository.addUser(librarian);
         logger.info("User Librarian created with id {}", librarian.getId());
-        return librarian;
+        return toLibrarianDTO(librarian);
     }
 
-    public LibrarianDTO toLibrarianDTO(User created) {
+    private LibrarianDTO toLibrarianDTO(User created) {
         logger.info("Turn user librarian with id {} into a LibrarianDTO", created.getId());
         return librarianMapper.mapLibrarianToLibrarianDTO(created);
     }
