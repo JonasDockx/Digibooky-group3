@@ -2,11 +2,16 @@ package com.switchfully.digibookygroup3.api;
 
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
+import com.switchfully.digibookygroup3.api.dtos.CreateBookDTO;
+import com.switchfully.digibookygroup3.api.dtos.CreateLibrarianDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
+import com.switchfully.digibookygroup3.domain.user.User;
+import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +20,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
 
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -30,6 +36,8 @@ class BookControllerIntegrationTest {
     private AuthorRepository authorRepository;
 
     Book book;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -121,5 +129,39 @@ class BookControllerIntegrationTest {
                 .extract().as(BookDTO[].class);
 
         assertEquals(0, filteredBooks.length);
+    }
+
+    @Test
+    void registerBook_givenRightCredentialsAndInput_thenReturn201(){
+        addBooksAndAuthors();
+
+       userRepository.addUser(User.createLibrarian(
+                "librarian",
+                "librarian",
+                "librarian@librarian.lib",
+                "pass"
+        ));
+
+
+        CreateBookDTO createBookDTO = new CreateBookDTO(
+                "654654",
+                "test",
+                "Jonas",
+                "Dockx",
+                ""
+        );
+
+        BookDTO bookDTO = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(createBookDTO)
+                .auth()
+                .preemptive()
+                .basic("librarian@librarian.lib", "pass")
+                .when()
+                .post("http://localhost:" + port + "/members/librarians")
+                .then()
+                .statusCode(201)
+                .extract()
+                .as(BookDTO.class);
     }
 }

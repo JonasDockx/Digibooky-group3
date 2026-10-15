@@ -3,6 +3,7 @@ package com.switchfully.digibookygroup3.service;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
+import com.switchfully.digibookygroup3.api.dtos.CreateBookDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
@@ -11,6 +12,7 @@ import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -103,5 +105,15 @@ public class BookService {
                 .toList();
         logger.info("Fetched books with size {}", bookDTOS.size());
         return bookDTOS;
+    }
+
+    public BookDTO addBook(@Valid CreateBookDTO dto) {
+        List<Author> authors = authorRepository.getAuthorsByName(dto.getAuthorFirstname() + " " + dto.getAuthorLastname());
+        String authorId = authors.get(0).getId();
+
+        Book book = bookMapper.mapDTOToBook(dto, authorId);
+        bookRepository.addBook(book);
+        logger.info("User Librarian created book with id {}", book.getId());
+        return bookMapper.toDto(book, getAuthorDTOById(authorId));
     }
 }
