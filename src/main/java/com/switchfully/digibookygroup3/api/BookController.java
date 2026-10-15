@@ -3,9 +3,9 @@ package com.switchfully.digibookygroup3.api;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.domain.user.Feature;
+import com.switchfully.digibookygroup3.api.dtos.UpdateBookDTO;
 import com.switchfully.digibookygroup3.service.BookService;
 import com.switchfully.digibookygroup3.service.SecurityService;
-import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,4 +68,10 @@ public class BookController {
         securityService.validateAuthorization(authorization, Feature.RESTORE_BOOK);
         bookService.restoreBook(id);
     }
+    @PutMapping(path = "/{id}", produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+    @ResponseStatus(HttpStatus.OK)
+    public BookWithSummaryDTO updateBook(@RequestBody UpdateBookDTO updateBookDTO, @PathVariable("id") String id) {
+        return bookService.updateBook(updateBookDTO, id);
+    }
+
 }

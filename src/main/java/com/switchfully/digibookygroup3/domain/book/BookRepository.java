@@ -27,8 +27,9 @@ public class BookRepository {
                 .toList();
     }
 
-    public void addBook(Book book) {
+    public Book save(Book book) {
         books.put(book.getId(), book);
+        return book;
     }
 
     public Optional<Book> getBydId(String id) {

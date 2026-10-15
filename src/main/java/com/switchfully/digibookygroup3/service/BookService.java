@@ -3,6 +3,7 @@ package com.switchfully.digibookygroup3.service;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
+import com.switchfully.digibookygroup3.api.dtos.UpdateBookDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
@@ -70,6 +71,10 @@ public class BookService {
         return bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
     }
 
+    private Author getAuthorById(String id) {
+        return authorRepository.getById(id)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
+    }
     private AuthorDTO getAuthorDTOById(String id) {
         logger.info("Received getAuthorDTOById request with id {}", id);
         Author author = authorRepository.getById(id)
@@ -122,5 +127,28 @@ public class BookService {
         Book book = getBookByIdOrElseThrowBookNotFoundException(id);
 
         bookRepository.restoreBook(book);
+    }
+
+    public BookWithSummaryDTO updateBook(UpdateBookDTO updateBookDTO, String id) {
+        logger.info("Received update a book request with id {}", id);
+        Author author = updateAuthor(updateBookDTO.authorDTO(), updateBookDTO.authorDTO().id());
+        Book book = getBookByIdOrElse(id);
+
+        book.setAuthorId(author.getId());
+        book.setIsbn(updateBookDTO.isbn());
+        book.setTitle(updateBookDTO.title());
+        book.setSummary(updateBookDTO.summary());
+
+        BookWithSummaryDTO updatedBook = mapToDtoWithSummary(bookRepository.save(book));
+        logger.info("Book updated with id {}", id);
+
+        return updatedBook;
+    }
+
+    private Author updateAuthor(AuthorDTO authorDTO, String id) {
+        Author author = getAuthorById(id);
+        author.setFirstname(authorDTO.firstname());
+        author.setLastname(authorDTO.lastname());
+        return authorRepository.save(author);
     }
 }
