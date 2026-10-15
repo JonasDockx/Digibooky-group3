@@ -32,18 +32,13 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
-    @GetMapping(path = "/search", produces = APPLICATION_JSON)
+    @GetMapping(produces = APPLICATION_JSON)
     @ResponseStatus(HttpStatus.OK)
     public List<BookDTO> getBooksByISBN(@PathParam("isbn") String isbn) {
         return bookService.getBookByISBN(isbn);
     }
 
-    @GetMapping(path = "/search", produces = APPLICATION_JSON)
-    @ResponseStatus(HttpStatus.OK)
-    public List<BookDTO> getBooksByAuthorName(@PathParam("authorname") String name) {
-        return bookService.searchBooksByAuthor(name);
-    }
-    @GetMapping(path = "/search", produces = APPLICATION_JSON)
+    @GetMapping(produces = APPLICATION_JSON)
     @ResponseStatus(HttpStatus.OK)
     public List<BookDTO> getBooksByAuthorName(@PathParam("authorname") String name) {
         return bookService.searchBooksByAuthor(name);

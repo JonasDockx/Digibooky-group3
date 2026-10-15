@@ -102,7 +102,7 @@ class BookControllerIntegrationTest {
 
         BookDTO[] filteredBooks = RestAssured.given()
                 .port(port)
-                .get("/books/search?isbn=*543*")
+                .get("/books?isbn=*543*")
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(BookDTO[].class);
@@ -116,7 +116,7 @@ class BookControllerIntegrationTest {
 
         BookDTO[] filteredBooks = RestAssured.given()
                 .port(port)
-                .get("/books/search?isbn=*543*")
+                .get("/books?isbn=*543*")
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(BookDTO[].class);
