@@ -44,7 +44,7 @@ public class BookRepository {
                 .filter(book -> book.getTitle().matches(regex))
     public List<Book> getBooksByAuthorIds(Set<String> authorIds) {
         return books.values().stream()
-                .filter(book -> authorIds.contains(book.getAuthorId()))
+                .filter(book -> authorIds.contains(book.getAuthorId()));
                 .toList();
     }
 }
