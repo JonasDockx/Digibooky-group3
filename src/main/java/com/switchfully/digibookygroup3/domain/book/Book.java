@@ -4,11 +4,28 @@ import java.util.UUID;
 
 public class Book {
         private final String id;
-        private final String isbn;
-        private final String title;
-        private final String authorId;
+        private String isbn;
+        private String title;
+        private String authorId;
         private boolean isAvailable;
         private boolean isArchived;
+
+        public void setSummary(String summary) {
+                this.summary = summary;
+        }
+
+        public void setIsbn(String isbn) {
+                this.isbn = isbn;
+        }
+
+        public void setTitle(String title) {
+                this.title = title;
+        }
+
+        public void setAuthorId(String authorId) {
+                this.authorId = authorId;
+        }
+
         private String summary;
 
         public Book(String isbn, String title, String authorId, String summary) {

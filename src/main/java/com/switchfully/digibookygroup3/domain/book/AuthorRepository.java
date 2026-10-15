@@ -18,6 +18,11 @@ public class AuthorRepository {
         this.authors = new ConcurrentHashMap<>();
     }
 
+    public Author save(Author author) {
+        authors.put(author.getId(), author);
+        return author;
+    }
+
     public Optional<Author> getById(String id) {
         return Optional.ofNullable(authors.get(id));
     }
