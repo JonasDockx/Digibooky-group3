@@ -1,22 +1,20 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
-import com.switchfully.digibookygroup3.exception.BookNotFoundException;
-import com.switchfully.digibookygroup3.mapper.AuthorMapper;
-import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
+import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
 import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
+import com.switchfully.digibookygroup3.mapper.AuthorMapper;
+import com.switchfully.digibookygroup3.mapper.BookMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -74,7 +72,15 @@ class BookServiceTest {
 
         assertThatThrownBy(() -> bookService.getAllBooks())
                 .isInstanceOf(AuthorNotFoundException.class)
-                        .hasMessage("Author not found with id invalidId");
+                .hasMessage("Author not found with id invalidId");
+    }
+
+    @Test
+    void getListOfBooks_WhenNonExistingAuthorIsPassedOnToRequestBooksByAuthor() {
+        List<BookDTO> result = bookService.searchBooksByAuthor("a1*");
+
+        assertThat(result).isEmpty();
+
     }
 
     @Test
@@ -229,4 +235,35 @@ class BookServiceTest {
 
         assertThat(filteredList).isEmpty();
     }
+    void getListOfBooks_WhenExistingAuthorIsPassedOnToRequestBooksByAuthor() {
+        List<Author> authors = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
+                new Author("a2_firstname", "a2_lastname")));
+        String firstAuthorId = authors.get(0).getId();
+        String secondAuthorId = authors.get(1).getId();
+
+        List<Book> books = new LinkedList<>(List.of(new Book("ISBN1", "title1", firstAuthorId, "summary"),
+                new Book("ISBN2", "title2", secondAuthorId, "summary")));
+
+        Set<String> expectedAuthorIds = Set.of(firstAuthorId);
+
+        when(authorRepositoryMock.getAuthorsByName("a1*"))
+                .thenReturn(List.of(authors.get(0)));
+        when(authorRepositoryMock.getById(firstAuthorId))
+                .thenReturn(Optional.of(authors.get(0)));
+        when(bookRepositoryMock.getBooksByAuthorIds(expectedAuthorIds))
+                .thenReturn(Collections.singletonList(books.get(0)));
+
+        System.out.println(firstAuthorId);
+        System.out.println(books.get(0).getAuthorId());
+
+        List<BookDTO> result = bookService.searchBooksByAuthor("a1*");
+
+        verify(bookRepositoryMock).getBooksByAuthorIds(expectedAuthorIds);
+        assertThat(result)
+                .isNotEmpty()
+                .extracting(BookDTO::getAuthorDTO)
+                .extracting(AuthorDTO::firstname)
+                .contains("a1_firstname");
+    }
+
 }

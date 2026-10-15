@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping(value = "/books")
 @RestController
+@RequestMapping(value = "/books")
 public class BookController {
     private static final String APPLICATION_JSON = "application/json";
 
@@ -32,7 +32,7 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
-    @GetMapping(path = "/search", produces = APPLICATION_JSON)
+    @GetMapping(path = "/search", produces = APPLICATION_JSON, params = "isbn")
     @ResponseStatus(HttpStatus.OK)
     public List<BookDTO> getBooksByISBN(@PathParam("isbn") String isbn) {
         return bookService.getBookByISBN(isbn);
@@ -45,4 +45,9 @@ public class BookController {
     }
 
 
+    @GetMapping(path = "/search", produces = APPLICATION_JSON, params = "authorname")
+    @ResponseStatus(HttpStatus.OK)
+    public List<BookDTO> getBooksByAuthorName(@PathParam("authorname") String name) {
+        return bookService.searchBooksByAuthor(name);
+    }
 }
