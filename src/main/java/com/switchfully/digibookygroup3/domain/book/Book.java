@@ -8,7 +8,7 @@ public class Book {
         private final String title;
         private final String authorId;
         private boolean isAvailable;
-        private boolean isArchived;
+        private boolean isDeleted;
         private String summary;
 
         public Book(String isbn, String title, String authorId, String summary) {
@@ -17,8 +17,16 @@ public class Book {
                 this.title = title;
                 this.authorId = authorId;
                 this.isAvailable = true;
-                this.isArchived = false;
+                this.isDeleted = false;
                 this.summary = summary;
+        }
+
+        public void softDelete() {
+                isDeleted = true;
+        }
+
+        public void restoreBook() {
+                isDeleted = false;
         }
 
         public String getId() {
@@ -39,5 +47,9 @@ public class Book {
 
         public String getSummary() {
                 return summary;
+        }
+
+        public boolean isDeleted() {
+                return isDeleted;
         }
 }

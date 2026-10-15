@@ -17,7 +17,14 @@ public class BookRepository {
     }
 
     public List<Book> getAllBooks() {
-        return List.copyOf(books.values());
+        return filterActiveBooks(List.copyOf(books.values()));
+    }
+
+    private List<Book> filterActiveBooks(List<Book> books) {
+        return books
+                .stream()
+                .filter(book -> !book.isDeleted())
+                .toList();
     }
 
     public void addBook(Book book) {
@@ -31,21 +38,33 @@ public class BookRepository {
     public List<Book> getBooksByISBNNumber(String isbn) {
         String regex = "^" + isbn.trim().replace("*", "\\d*") + "$";
 
-        return books.values().stream()
+        List<Book> allBooks = books.values().stream()
                 .filter(book -> book.getIsbn().matches(regex))
                 .toList();
+        return filterActiveBooks(allBooks);
     }
 
     public List<Book> getBooksByTitle(String title) {
         String regex = "(?i)^" + title.trim().replace("*", "\\d*") + "$";
 
-        return books.values().stream()
+        List<Book> allBooks = books.values().stream()
                 .filter(book -> book.getTitle().matches(regex))
                 .toList();
+        return filterActiveBooks(allBooks);
     }
 
     public List<Book> getBooksByAuthorIds(Set<String> authorIds) {
-        return books.values().stream()
+        List<Book> allBooks = books.values().stream()
                 .filter(book -> authorIds.contains(book.getAuthorId())).toList();
+
+        return filterActiveBooks(allBooks);
+    }
+
+    public void deleteBook(Book book) {
+        book.softDelete();
+    }
+
+    public void restoreBook(Book book) {
+        book.restoreBook();
     }
 }

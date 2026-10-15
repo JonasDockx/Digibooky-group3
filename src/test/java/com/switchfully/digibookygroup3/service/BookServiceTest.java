@@ -235,6 +235,8 @@ class BookServiceTest {
 
         assertThat(filteredList).isEmpty();
     }
+
+    @Test
     void getListOfBooks_WhenExistingAuthorIsPassedOnToRequestBooksByAuthor() {
         List<Author> authors = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
                 new Author("a2_firstname", "a2_lastname")));
@@ -266,4 +268,65 @@ class BookServiceTest {
                 .contains("a1_firstname");
     }
 
+    @Test
+    void deleteBook_givenAnExistingBook_whenDeleteBook_thenReturnsOK() {
+        addAuthorsAndBooks();
+        Book book = books.get(0);
+        when(bookRepositoryMock.getBydId(book.getId()))
+                .thenReturn(Optional.of(book));
+        doAnswer(invocation ->  {
+            book.softDelete();
+            return null;
+        }).when(bookRepositoryMock).deleteBook(book);
+
+        bookService.deleteBook(book.getId());
+
+        assertThat(book.isDeleted()).isTrue();
+    }
+
+    @Test
+    void deleteBook_givenAnExistingButDeletedBook_whenDeleteBook_thenThrowsBookNotFoundException() {
+        addAuthorsAndBooks();
+        Book book = books.get(0);
+        book.softDelete();
+
+        when(bookRepositoryMock.getBydId(book.getId()))
+                .thenReturn(Optional.of(book));
+
+        assertThatThrownBy(()-> bookService.deleteBook(book.getId()))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Book not found with id " + book.getId());
+    }
+
+    @Test
+    void deleteBook_givenNonExistingBook_whenDeleteBook_thenThrowsBookNotFoundException() {
+        assertThatThrownBy(()-> bookService.deleteBook("invalidId"))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Book not found with id invalidId");
+    }
+
+    @Test
+    void restoreBook_givenAnExistingButDeletedBook_whenRestoreBook_thenReturnsOK() {
+        addAuthorsAndBooks();
+        Book book = books.get(0);
+        book.softDelete();
+
+        when(bookRepositoryMock.getBydId(book.getId()))
+                .thenReturn(Optional.of(book));
+        doAnswer(invocation ->  {
+            book.restoreBook();
+            return null;
+        }).when(bookRepositoryMock).restoreBook(book);
+
+        bookService.restoreBook(book.getId());
+
+        assertThat(book.isDeleted()).isFalse();
+    }
+
+    @Test
+    void restoreBook_givenNonExistingBook_whenRestoreBook_thenThrowsBookNotFoundException() {
+        assertThatThrownBy(()-> bookService.restoreBook("invalidId"))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Book not found with id invalidId");
+    }
 }

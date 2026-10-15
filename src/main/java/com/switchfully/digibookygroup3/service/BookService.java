@@ -11,6 +11,7 @@ import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -47,10 +48,14 @@ public class BookService {
 
     public BookWithSummaryDTO getBookById(String id) {
         logger.info("Received getBookById request with id {}", id);
-        Book book = bookRepository.getBydId(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
 
         return mapToDtoWithSummary(book);
+    }
+
+    private Book getBookByIdOrElseThrowBookNotFoundException(String id) {
+        return bookRepository.getBydId(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     private BookDTO mapToDto(Book book) {
@@ -103,5 +108,19 @@ public class BookService {
                 .toList();
         logger.info("Fetched books with size {}", bookDTOS.size());
         return bookDTOS;
+    }
+
+    public void deleteBook(String id) {
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
+        if (book.isDeleted()) {
+            throw new BookNotFoundException(id);
+        }
+        bookRepository.deleteBook(book);
+    }
+
+    public void restoreBook(String id) {
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
+
+        bookRepository.restoreBook(book);
     }
 }

@@ -6,6 +6,8 @@ import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
+import com.switchfully.digibookygroup3.domain.user.User;
+import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,9 @@ class BookControllerIntegrationTest {
 
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     Book book;
 
@@ -121,5 +126,161 @@ class BookControllerIntegrationTest {
                 .extract().as(BookDTO[].class);
 
         assertEquals(0, filteredBooks.length);
+    }
+
+    @Test
+    void deleteBook_givenAnInvalidUserAnExistingBook_whenDeleteBook_thenReturnsUnauthorized() {
+        addBooksAndAuthors();
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    void deleteBook_givenAnInvalidUserAnExistingBook_whenDeleteBook_thenReturnsForbidden() {
+        addBooksAndAuthors();
+        User admin = User.createAdmin("last", "first", "emailInvalid", "passwordInvalid");
+        userRepository.addUser(admin);
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(admin.getEmail(), admin.getPassword())
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void deleteBook_givenAValidUserAnExistingBook_whenDeleteBook_thenReturnsOK() {
+        addBooksAndAuthors();
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void deleteBook_givenAnExistingButDeletedBook_whenDeleteBook_thenThrowsBookNotFoundException() {
+        addBooksAndAuthors();
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+        book.softDelete();
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void deleteBook_givenNonExistingBook_whenDeleteBook_thenThrowsBookNotFoundException() {
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .delete("/books/Deleted")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void restoreBook_givenAnExistingButDeletedBook_whenRestoreBook_thenReturnsOK() {
+        addBooksAndAuthors();
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+        book.softDelete();
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .put("/books/restore/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void restoreBook_givenNonExistingBook_whenRestoreBook_thenThrowsBookNotFoundException() {
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .put("/books/restore/invalid")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void restoreBook_givenAnInvalidUserAnExistingBook_whenRestoreBook_thenReturnsUnauthorized() {
+        addBooksAndAuthors();
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .port(port)
+                .put("/books/restore/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    void restoreBook_givenAnInvalidUserAnExistingBook_whenRestoreBook_thenReturnsForbidden() {
+        addBooksAndAuthors();
+        User admin = User.createAdmin("last", "first", "emailTest", "passwordtest");
+        userRepository.addUser(admin);
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(admin.getEmail(), admin.getPassword())
+                .port(port)
+                .put("/books/restore/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 }
