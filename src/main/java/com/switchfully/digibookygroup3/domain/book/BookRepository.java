@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 @Repository
 public class BookRepository {
@@ -33,6 +32,14 @@ public class BookRepository {
 
         return books.values().stream()
                 .filter(book -> book.getIsbn().matches(regex))
+                .toList();
+    }
+
+    public List<Book> getBooksByTitle(String title) {
+        String regex = "(?i)^" + title.trim().replace("*", "\\d*") + "$";
+
+        return books.values().stream()
+                .filter(book -> book.getTitle().matches(regex))
                 .toList();
     }
 }
