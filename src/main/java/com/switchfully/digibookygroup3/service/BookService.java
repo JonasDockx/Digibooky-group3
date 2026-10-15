@@ -1,14 +1,16 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.AuthorMapper;
-import com.switchfully.digibookygroup3.api.BookMapper;
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
+import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
 import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
+import com.switchfully.digibookygroup3.mapper.AuthorMapper;
+import com.switchfully.digibookygroup3.mapper.BookMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,7 @@ import java.util.List;
 
 @Service
 public class BookService {
-    private final Logger logger = LoggerFactory.getLogger(BookRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(BookService.class);
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
@@ -32,22 +34,43 @@ public class BookService {
     }
 
     public List<BookDTO> getAllBooks() {
-        logger.info("Received get all books request");
+        logger.info("Received getAllBooks request");
         List<Book> books = bookRepository.getAllBooks();
         logger.debug("Fetched books with size {}", books.size());
         return books
                 .stream()
-                .map(book -> mapToDto(book, book.getAuthorId()))
+                .map(this::mapToDto)
                 .toList();
     }
 
-    private BookDTO mapToDto(Book book, String authorId) {
-        AuthorDTO authorDTO = authorMapper.toDto(getAuthorById(authorId));
-        return bookMapper.toDto(book, authorDTO);
+    public BookWithSummaryDTO getBookById(String id) {
+        logger.info("Received getBookById request with id {}", id);
+        Book book = bookRepository.getBydId(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        return mapToDtoWithSummary(book);
     }
 
-    private Author getAuthorById(String id) {
-        return authorRepository.getById(id)
+    private BookDTO mapToDto(Book book) {
+//        In order to build the book DTO, we also need the author DTO. This function assembles
+//        the book DTO and author DTO
+        return bookMapper.toDto(book, getAuthorDTOById(book.getAuthorId()));
+    }
+
+    private BookWithSummaryDTO mapToDtoWithSummary(Book book) {
+        return bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
+    }
+
+    private AuthorDTO getAuthorDTOById(String id) {
+        Author author = authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
+        return authorMapper.toDto(author);
+    }
+
+    public List<BookDTO> getBookByISBN(String isbn) {
+        return bookRepository.getBooksByISBNNumber(isbn)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
     }
 }

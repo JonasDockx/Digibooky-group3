@@ -1,5 +1,6 @@
 package com.switchfully.digibookygroup3.exception;
 
+import com.switchfully.digibookygroup3.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -44,4 +45,17 @@ public class GlobalExceptionHandler {
         logger.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
+
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<String> handleBookNotFoundException(BookNotFoundException e) {
+        logger.warn(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public ResponseEntity<String> handleAuthorNotFoundException(AuthorNotFoundException e) {
+        logger.warn(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
 }

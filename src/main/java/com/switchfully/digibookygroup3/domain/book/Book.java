@@ -4,26 +4,29 @@ import java.util.UUID;
 
 public class Book {
         private final String id;
-        private final String ISBN;
+        private final String isbn;
         private final String title;
-        private String authorId;
+        private final String authorId;
         private boolean isAvailable;
         private boolean isArchived;
+        private String summary;
 
-        public Book(String ISBN, String title, String authorId) {
+        public Book(String isbn, String title, String authorId, String summary) {
                 this.id = UUID.randomUUID().toString();
-                this.ISBN = ISBN;
+                this.isbn = isbn;
                 this.title = title;
                 this.authorId = authorId;
                 this.isAvailable = true;
+                this.isArchived = false;
+                this.summary = summary;
         }
 
         public String getId() {
                 return id;
         }
 
-        public String getISBN() {
-                return ISBN;
+        public String getIsbn() {
+                return isbn;
         }
 
         public String getTitle() {
@@ -32,5 +35,9 @@ public class Book {
 
         public String getAuthorId() {
                 return authorId;
+        }
+
+        public String getSummary() {
+                return summary;
         }
 }
