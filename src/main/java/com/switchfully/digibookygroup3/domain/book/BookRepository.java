@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,11 +40,12 @@ public class BookRepository {
         String regex = "(?i)^" + title.trim().replace("*", "\\d*") + "$";
 
         return books.values().stream()
-                .filter(book -> book.getTitle().matches(regex));
+                .filter(book -> book.getTitle().matches(regex))
+                .toList();
     }
+
     public List<Book> getBooksByAuthorIds(Set<String> authorIds) {
         return books.values().stream()
-                .filter(book -> authorIds.contains(book.getAuthorId()));
-                .toList();
+                .filter(book -> authorIds.contains(book.getAuthorId())).toList();
     }
 }

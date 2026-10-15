@@ -86,6 +86,9 @@ public class BookService {
                 .stream()
                 .map(this::mapToDto)
                 .toList();
+
+    }
+
     public List<BookDTO> searchBooksByAuthor(String name) {
         logger.info("Received search books by author request");
         if (name == null || name.isBlank()) {
