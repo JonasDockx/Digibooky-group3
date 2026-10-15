@@ -1,11 +1,16 @@
 package com.switchfully.digibookygroup3.service;
 
 import com.switchfully.digibookygroup3.api.MemberMapper;
+import com.switchfully.digibookygroup3.api.dtos.CreateLibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
+import com.switchfully.digibookygroup3.api.dtos.LibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.user.Member;
+import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import com.switchfully.digibookygroup3.exception.UserAlreadyExistsException;
+import com.switchfully.digibookygroup3.mapper.LibrarianMapper;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,11 +24,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final MemberMapper memberMapper;
+    private final LibrarianMapper librarianMapper;
 
-    public UserService(UserRepository userRepository, MemberMapper memberMapper) {
 
+    public UserService(UserRepository userRepository, MemberMapper memberMapper, LibrarianMapper librarianMapper) {
         this.userRepository = userRepository;
         this.memberMapper = memberMapper;
+        this.librarianMapper = librarianMapper;
     }
 
     public Member addMember(CreateMemberDTO dto) {
@@ -70,5 +77,17 @@ public class UserService {
         List<Member> members = userRepository.getAllMembers();
         logger.info("Fetching all members.");
         return memberMapper.mapMemberToMemberDTO(members);
+    }
+
+    public LibrarianDTO addLibrarian(@Valid CreateLibrarianDTO dto) {
+        User librarian = librarianMapper.mapDTOToLibrarian(dto);
+        userRepository.addUser(librarian);
+        logger.info("User Librarian created with id {}", librarian.getId());
+        return toLibrarianDTO(librarian);
+    }
+
+    private LibrarianDTO toLibrarianDTO(User created) {
+        logger.info("Turn user librarian with id {} into a LibrarianDTO", created.getId());
+        return librarianMapper.mapLibrarianToLibrarianDTO(created);
     }
 }

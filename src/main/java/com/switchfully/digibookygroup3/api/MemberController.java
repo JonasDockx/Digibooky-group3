@@ -1,9 +1,12 @@
 package com.switchfully.digibookygroup3.api;
 
+import com.switchfully.digibookygroup3.api.dtos.CreateLibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
+import com.switchfully.digibookygroup3.api.dtos.LibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.user.Feature;
 import com.switchfully.digibookygroup3.domain.user.Member;
+import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.service.SecurityService;
 import com.switchfully.digibookygroup3.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,5 +43,10 @@ public class MemberController {
         return userService.getMemberDTOs();
     }
 
-
+    @PostMapping(path = "librarians", consumes = "application/json", produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LibrarianDTO createLibrarian(@RequestHeader(value = "Authorization", required = false) String authorization, @Valid @RequestBody CreateLibrarianDTO dto) {
+        securityService.validateAuthorization(authorization, Feature.REGISTER_LIBRARIAN);
+        return userService.addLibrarian(dto);
+    }
 }

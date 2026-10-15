@@ -5,7 +5,7 @@ import java.util.List;
 
 public enum UserType {
     LIBRARIAN(List.of(Feature.REGISTER_BOOK)),
-    ADMIN(List.of(Feature.VIEW_MEMBERS)),
+    ADMIN(List.of(Feature.VIEW_MEMBERS, Feature.REGISTER_LIBRARIAN)),
     MEMBER();
 
     private List<Feature> features = new ArrayList<>();
