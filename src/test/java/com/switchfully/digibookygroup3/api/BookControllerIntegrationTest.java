@@ -146,9 +146,9 @@ class BookControllerIntegrationTest {
         CreateBookDTO createBookDTO = new CreateBookDTO(
                 "654654",
                 "test",
-                "Jonas",
                 "Dockx",
-                ""
+                "Jonas",
+                "test"
         );
 
         BookDTO bookDTO = RestAssured.given()
@@ -158,10 +158,37 @@ class BookControllerIntegrationTest {
                 .preemptive()
                 .basic("librarian@librarian.lib", "pass")
                 .when()
-                .post("http://localhost:" + port + "/members/librarians")
+                .post("http://localhost:" + port + "/books")
                 .then()
                 .statusCode(201)
                 .extract()
                 .as(BookDTO.class);
+
+        assertEquals("654654", bookDTO.getIsbn());
+        assertEquals("Dockx", bookDTO.getAuthorDTO().lastname());
+    }
+
+    @Test
+    void registerBook_givenWrongCredentialsAndRightInput_thenReturn403(){
+        addBooksAndAuthors();
+
+        CreateBookDTO createBookDTO = new CreateBookDTO(
+                "654654",
+                "test",
+                "Dockx",
+                "Jonas",
+                "test"
+        );
+
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(createBookDTO)
+                .auth()
+                .preemptive()
+                .basic("admin@admin.com", "pass")
+                .when()
+                .post("http://localhost:" + port + "/books")
+                .then()
+                .statusCode(403);
     }
 }
