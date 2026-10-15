@@ -38,4 +38,9 @@ public class BookController {
         return bookService.getBookByISBN(isbn);
     }
 
+    @GetMapping(path = "/search", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public List<BookDTO> getBooksByAuthorName(@PathParam("authorname") String name) {
+        return bookService.searchBooksByAuthor(name);
+    }
 }
