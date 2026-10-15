@@ -2,9 +2,10 @@ package com.switchfully.digibookygroup3.api;
 
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
+import com.switchfully.digibookygroup3.domain.user.Feature;
 import com.switchfully.digibookygroup3.domain.user.Member;
-import com.switchfully.digibookygroup3.service.MemberService;
-import io.swagger.v3.oas.annotations.Operation;
+import com.switchfully.digibookygroup3.service.SecurityService;
+import com.switchfully.digibookygroup3.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,23 +18,26 @@ import java.util.List;
 @RequestMapping(path = "/members")
 public class MemberController {
 
-    private final MemberService memberService;
+    private final UserService userService;
+    private final SecurityService securityService;
 
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
+    public MemberController(UserService userService, SecurityService securityService) {
+        this.userService = userService;
+        this.securityService = securityService;
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public MemberDTO createMember(@Valid @RequestBody CreateMemberDTO dto) {
-        Member created = memberService.addMember(dto);
-        return memberService.toMemberDTO(created);
+        Member created = userService.addMember(dto);
+        return userService.toMemberDTO(created);
     }
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public List<MemberDTO> getAllMembers() {
-        return memberService.getMemberDTOs();
+    public List<MemberDTO> getAllMembers(@RequestHeader(value = "Authorization", required = false) String authorization) {
+        securityService.validateAuthorization(authorization, Feature.VIEW_MEMBERS);
+        return userService.getMemberDTOs();
     }
 
 

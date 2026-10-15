@@ -1,6 +1,5 @@
-package com.switchfully.digibookygroup3.api;
+package com.switchfully.digibookygroup3.exception;
 
-import com.switchfully.digibookygroup3.exception.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,5 +31,17 @@ public class GlobalExceptionHandler {
                         (a, b) -> a));
         logger.warn("Validation failed: {}", errors.keySet());
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException e) {
+        logger.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<String> handleForbiddenException(ForbiddenException e) {
+        logger.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 }
