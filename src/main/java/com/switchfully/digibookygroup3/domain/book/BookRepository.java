@@ -41,7 +41,8 @@ public class BookRepository {
         String regex = "(?i)^" + title.trim().replace("*", "\\d*") + "$";
 
         return books.values().stream()
-                .filter(book -> book.getTitle().matches(regex))
+                .filter(book -> book.getTitle().matches(regex));
+    }
     public List<Book> getBooksByAuthorIds(Set<String> authorIds) {
         return books.values().stream()
                 .filter(book -> authorIds.contains(book.getAuthorId()));
