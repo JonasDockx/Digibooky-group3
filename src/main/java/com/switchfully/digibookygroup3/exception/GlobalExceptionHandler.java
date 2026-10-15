@@ -34,13 +34,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<String> unauthorizedException(UnauthorizedException e) {
+    public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException e) {
         logger.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<String> forbiddenException(ForbiddenException e) {
+    public ResponseEntity<String> handleForbiddenException(ForbiddenException e) {
         logger.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }

@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Optional;
 
-import static org.springframework.util.StringUtils.split;
 
 @Service
 public class SecurityService {
@@ -23,35 +21,31 @@ public class SecurityService {
 
     public void validateAuthorization(String authorization, Feature feature) {
         if(authorization == null || !authorization.startsWith("Basic")) {
-            throw new UnauthorizedException("authorization == null || !authorization.startsWith(\"Basic\")");
+            throw new UnauthorizedException();
         }
 
         String encodedCredentials = authorization.replaceFirst("^Basic\\s+", "");
         String decodedCredentials = new String(Base64.getDecoder().decode(encodedCredentials), StandardCharsets.UTF_8);
 
-        String[] emailAndPassword = split(decodedCredentials, ":");
+        if (!decodedCredentials.contains(":")) {
+            throw new UnauthorizedException();
 
-        if(emailAndPassword == null || emailAndPassword[0] == null || emailAndPassword[1] == null) {
-            throw new UnauthorizedException("emailAndPassword[0] == null || emailAndPassword[1] == null");
         }
+
+        String[] emailAndPassword = decodedCredentials.split( ":", 2);
 
         String email = emailAndPassword[0];
         String password = emailAndPassword[1];
 
-        Optional<User> optionalUser = userRepository.getUserByEmail(email);
+        User user = userRepository.getUserByEmail(email)
+                .orElseThrow(UnauthorizedException::new);
 
-        if(optionalUser.isEmpty()){
-            throw new UnauthorizedException("optionalUser.isEmpty()");
-        }
-
-        User user = optionalUser.get();
-
-        if(!userRepository.passMatch(user.getId(), password)){
-            throw new UnauthorizedException("!userRepository.passMatch(password)");
+        if(!userRepository.doesPasswordMatch(user.getId(), password)){
+            throw new UnauthorizedException();
         }
 
         if(!user.canHaveAccessTo(feature)){
-            throw new ForbiddenException("!user.canHaveAccesTo(feature)");
+            throw new ForbiddenException();
         }
     }
 }

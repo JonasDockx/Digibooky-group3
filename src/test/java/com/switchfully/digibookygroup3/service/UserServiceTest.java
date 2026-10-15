@@ -1,6 +1,5 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.MemberMapper;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.user.Member;
@@ -19,14 +18,14 @@ class UserServiceTest {
 
     @LocalServerPort
     private int port;
-    private final static String ADMIN_USERNAME = "admin@admin.com";
-    private final static String ADMIN_PASSWORD = "pass";
+    private static final String ADMIN_USERNAME = "admin@admin.com";
+    private static final String ADMIN_PASSWORD = "pass";
 
     @Autowired
     private UserRepository userRepository;
 
     @BeforeEach
-    public void setupUserRepository() {
+    void setupUserRepository() {
 
         userRepository.resetMembers();
 

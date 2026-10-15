@@ -25,14 +25,14 @@ public class UserRepository {
         return users.values()
                 .stream()
                 .filter(user -> user.getUserType().equals(UserType.MEMBER))
-                .map(user -> (Member) user)
+                .map(Member.class::cast)
                 .toList();
     }
 
     public boolean isINSSPresent(String inss) {
         return users.values().stream()
                 .filter(user -> user.getUserType().equals(UserType.MEMBER))
-                .map(user -> (Member) user)
+                .map(Member.class::cast)
                 .map(Member::getInss)
                 .anyMatch(each -> each.equals(inss));
     }
@@ -50,7 +50,7 @@ public class UserRepository {
 
     }
 
-    public boolean passMatch(String id, String password) {
+    public boolean doesPasswordMatch(String id, String password) {
         return users.get(id).getPassword().equals(password);
 
     }
@@ -58,6 +58,6 @@ public class UserRepository {
     public void resetMembers() {
         users.clear();
         //        As requested, an admin exists on startup.
-        addUser(new Admin("admin", "admin", "admin@admin.com", "pass"));
+        addUser(User.createAdmin("admin", "admin", "admin@admin.com", "pass"));
     }
 }
