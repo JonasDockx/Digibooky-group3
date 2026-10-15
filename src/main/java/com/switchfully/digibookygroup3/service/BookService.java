@@ -132,7 +132,7 @@ public class BookService {
     public BookWithSummaryDTO updateBook(UpdateBookDTO updateBookDTO, String id) {
         logger.info("Received update a book request with id {}", id);
         Author author = updateAuthor(updateBookDTO.authorDTO(), updateBookDTO.authorDTO().id());
-        Book book = getBookByIdOrElse(id);
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
 
         book.setAuthorId(author.getId());
         book.setIsbn(updateBookDTO.isbn());

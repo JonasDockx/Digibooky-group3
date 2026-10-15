@@ -192,7 +192,7 @@ class BookControllerIntegrationTest {
         addBooksAndAuthors();
         Author author = new Author("Test", "Test");
         authorRepository.addAuthor(author);
-        bookRepository.addBook(new Book("00002", "Titles", author.getId(), "Test summary"));
+        bookRepository.save(new Book("00002", "Titles", author.getId(), "Test summary"));
 
         BookDTO[] filteredBooks = RestAssured.given()
                 .port(port)
@@ -209,7 +209,7 @@ class BookControllerIntegrationTest {
         addBooksAndAuthors();
         Author author = new Author("TestName", "Test");
         authorRepository.addAuthor(author);
-        bookRepository.addBook(new Book("00002", "Wrong", author.getId(), "Test summary"));
+        bookRepository.save(new Book("00002", "Wrong", author.getId(), "Test summary"));
 
         BookDTO[] filteredBooks = RestAssured.given()
                 .port(port)
