@@ -179,6 +179,62 @@ class BookServiceTest {
     }
 
     @Test
+    void getBookByTitleShouldReturnAListOfBooksWithTheExactTitle() {
+        Author author = authors.get(0);
+        Book book = books.get(0);
+
+        when(bookRepositoryMock.getBooksByTitle("title1"))
+                .thenReturn(List.of(book));
+        when(authorRepositoryMock.getById(author.getId()))
+                .thenReturn(Optional.of(author));
+
+        List<BookDTO> filteredList = bookService.getBookByTitle("title1");
+
+        assertThat(filteredList).hasSize(1);
+    }
+
+    @Test
+    void getBookByTitleShouldReturnAListOfBooksContainingThatTitle() {
+
+        when(bookRepositoryMock.getBooksByTitle("ti*"))
+                .thenReturn(books);
+        when(authorRepositoryMock.getById(authors.get(0).getId()))
+                .thenReturn(Optional.of(authors.get(0)));
+        when(authorRepositoryMock.getById(authors.get(1).getId()))
+                .thenReturn(Optional.of(authors.get(1)));
+
+        List<BookDTO> filteredList = bookService.getBookByTitle("ti*");
+
+        assertThat(filteredList)
+                .hasSize(2)
+                .extracting(BookDTO::getTitle)
+                .containsOnly("title1", "title2");
+    }
+
+    @Test
+    void getBookByTitleShouldReturnAListOfBooksContainingTheEndThatTitle() {
+
+        when(bookRepositoryMock.getBooksByTitle("*TL*"))
+                .thenReturn(books);
+        when(authorRepositoryMock.getById(authors.get(0).getId()))
+                .thenReturn(Optional.of(authors.get(0)));
+        when(authorRepositoryMock.getById(authors.get(1).getId()))
+                .thenReturn(Optional.of(authors.get(1)));
+
+        List<BookDTO> filteredList = bookService.getBookByTitle("*TL*");
+
+        assertThat(filteredList)
+                .hasSize(2)
+                .extracting(BookDTO::getTitle)
+                .containsOnly("title1", "title2");
+    }
+
+    @Test
+    void getBookByTitleShouldReturnAnEmptyList() {
+        List<BookDTO> filteredList = bookService.getBookByISBN("ti*");
+
+        assertThat(filteredList).isEmpty();
+    }
     void getListOfBooks_WhenExistingAuthorIsPassedOnToRequestBooksByAuthor() {
         List<Author> authors = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
                 new Author("a2_firstname", "a2_lastname")));

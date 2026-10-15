@@ -56,24 +56,37 @@ public class BookService {
     private BookDTO mapToDto(Book book) {
 //        In order to build the book DTO, we also need the author DTO. This function assembles
 //        the book DTO and author DTO
+        logger.info("Mapping a book to a BookDTO");
         return bookMapper.toDto(book, getAuthorDTOById(book.getAuthorId()));
     }
 
     private BookWithSummaryDTO mapToDtoWithSummary(Book book) {
+        logger.info("Mapping a book to a BookWithSummaryDTO");
         return bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
     }
 
     private AuthorDTO getAuthorDTOById(String id) {
+        logger.info("Received getAuthorDTOById request with id {}", id);
         Author author = authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
         return authorMapper.toDto(author);
     }
 
     public List<BookDTO> getBookByISBN(String isbn) {
+        logger.info("Received getBookByISBN request with ISBN {}", isbn);
         return bookRepository.getBooksByISBNNumber(isbn)
                 .stream()
                 .map(this::mapToDto)
                 .toList();
+    }
+
+    public List<BookDTO> getBookByTitle(String title) {
+        logger.info("Received getBookByTitle request with title {}", title);
+        return bookRepository.getBooksByTitle(title)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+
     }
 
     public List<BookDTO> searchBooksByAuthor(String name) {
