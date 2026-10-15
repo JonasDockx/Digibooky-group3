@@ -14,8 +14,9 @@ public class AuthorRepository {
         this.authors = new ConcurrentHashMap<>();
     }
 
-    public void addAuthor(Author author) {
+    public Author save(Author author) {
         authors.put(author.getId(), author);
+        return author;
     }
 
     public Optional<Author> getById(String id) {

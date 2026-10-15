@@ -4,8 +4,16 @@ import java.util.UUID;
 
 public class Author {
     private final String id;
-    private final String firstname;
-    private final String lastname;
+    private String firstname;
+    private String lastname;
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
 
     public Author(String firstname, String lastname) {
         this.id = UUID.randomUUID().toString();

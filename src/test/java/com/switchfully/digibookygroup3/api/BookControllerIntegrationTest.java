@@ -1,7 +1,9 @@
 package com.switchfully.digibookygroup3.api;
 
+import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
+import com.switchfully.digibookygroup3.api.dtos.UpdateBookDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
@@ -14,8 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
-
+import static io.restassured.http.ContentType.JSON;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -40,8 +42,8 @@ class BookControllerIntegrationTest {
         Author author = new Author("Jonas", "Dockx");
         book = new Book("123456789", "Test", author.getId(), "Test test test summary");
 
-        authorRepository.addAuthor(author);
-        bookRepository.addBook(book);
+        authorRepository.save(author);
+        bookRepository.save(book);
     }
 
     private BookDTO[] getAllBooks() {
@@ -97,8 +99,8 @@ class BookControllerIntegrationTest {
     void getBookByISBNReturnsTheBook() {
         addBooksAndAuthors();
         Author author = new Author("Test", "Test");
-        authorRepository.addAuthor(author);
-        bookRepository.addBook(new Book("987654321", "Test", author.getId(), "Test summary"));
+        authorRepository.save(author);
+        bookRepository.save(new Book("987654321", "Test", author.getId(), "Test summary"));
 
         BookDTO[] filteredBooks = RestAssured.given()
                 .port(port)
@@ -122,5 +124,64 @@ class BookControllerIntegrationTest {
                 .extract().as(BookDTO[].class);
 
         assertEquals(0, filteredBooks.length);
+    }
+
+    @Test
+    void updateBook_givenAnExistingBookWithValidAuthor_whenUpdateBook_thenReturnsTheUpdatedBook() {
+        addBooksAndAuthors();
+        Book book1 = bookRepository.getAllBooks().get(0);
+        AuthorDTO authorDTO = new AuthorDTO(book1.getAuthorId(), "Dockx", "Jonas");
+
+        UpdateBookDTO updateBookDTO = new UpdateBookDTO("test", "test", "test", authorDTO);
+
+        BookWithSummaryDTO result = RestAssured.given()
+                .body(updateBookDTO)
+                .contentType(JSON)
+                .port(port)
+                .put("/books/" + book1.getId())
+                .then().statusCode(HttpStatus.OK.value())
+                .extract().as(BookWithSummaryDTO.class);
+
+        assertThat(result.getAuthorDTO()).isEqualTo(authorDTO);
+        assertThat(result.getTitle()).isEqualTo(updateBookDTO.title());
+        assertThat(result.getIsbn()).isEqualTo(updateBookDTO.isbn());
+        assertThat(result.getSummary()).isEqualTo(updateBookDTO.summary());
+
+    }
+
+
+    @Test
+    void updateBook_givenAnExistingBookWithInvalidAuthor_whenUpdateBook_thenThrowsAuthorNotFoundException() {
+        UpdateBookDTO updateBookDTO = new UpdateBookDTO("a", "1", "ab", new AuthorDTO("1", "firstname", "lastname"));
+
+        String result = RestAssured.given()
+                .body(updateBookDTO)
+                .contentType(JSON)
+                .port(port)
+                .put("/books/999")
+                .then().statusCode(HttpStatus.NOT_FOUND.value())
+                .extract().asString();
+
+        assertEquals("Author not found with id 1", result);
+    }
+
+
+    @Test
+    void updateBook_givenANonExistingBook_whenUpdateBook_thenThrowsBookNotFoundException() {
+        addBooksAndAuthors();
+        Book book1 = bookRepository.getAllBooks().get(0);
+        AuthorDTO authorDTO = new AuthorDTO(book1.getAuthorId(), "Jonas", "Dockx");
+
+        UpdateBookDTO updateBookDTO = new UpdateBookDTO("a", "1", "ab", authorDTO);
+
+        String result = RestAssured.given()
+                .body(updateBookDTO)
+                .contentType(JSON)
+                .port(port)
+                .put("/books/999")
+                .then().statusCode(HttpStatus.NOT_FOUND.value())
+                .extract().asString();
+
+        assertEquals("Book not found with id 999", result);
     }
 }

@@ -2,6 +2,7 @@ package com.switchfully.digibookygroup3.api;
 
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
+import com.switchfully.digibookygroup3.api.dtos.UpdateBookDTO;
 import com.switchfully.digibookygroup3.service.BookService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,12 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     public List<BookDTO> getBooksByISBN(@PathParam("isbn") String isbn) {
         return bookService.getBookByISBN(isbn);
+    }
+
+    @PutMapping(path = "/{id}", produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+    @ResponseStatus(HttpStatus.OK)
+    public BookWithSummaryDTO updateBook(@RequestBody UpdateBookDTO updateBookDTO, @PathVariable("id") String id) {
+        return bookService.updateBook(updateBookDTO, id);
     }
 
 }

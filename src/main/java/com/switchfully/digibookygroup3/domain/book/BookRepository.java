@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 @Repository
 public class BookRepository {
@@ -20,8 +19,9 @@ public class BookRepository {
         return List.copyOf(books.values());
     }
 
-    public void addBook(Book book) {
+    public Book save(Book book) {
         books.put(book.getId(), book);
+        return book;
     }
 
     public Optional<Book> getBydId(String id) {
