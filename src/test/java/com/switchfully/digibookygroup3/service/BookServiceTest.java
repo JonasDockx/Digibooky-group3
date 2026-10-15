@@ -212,4 +212,44 @@ class BookServiceTest {
 
         assertThat(filteredList).isEmpty();
     }
+    @Test
+    void getListOfBooks_WhenExistingAuthorIsPassedOnToRequestBooksByAuthor() {
+        List<Author> authors = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
+                new Author("a2_firstname", "a2_lastname")));
+        String firstAuthorId = authors.get(0).getId();
+        String secondAuthorId = authors.get(1).getId();
+
+        List<Book> books = new LinkedList<>(List.of(new Book("ISBN1", "title1", firstAuthorId),
+                new Book("ISBN2", "title2", secondAuthorId)));
+
+        Set<String> expectedAuthorIds = Set.of(firstAuthorId);
+
+        when(authorRepositoryMock.getAuthorsByName("a1*"))
+                .thenReturn(List.of(authors.get(0)));
+        when(authorRepositoryMock.getById(firstAuthorId))
+                .thenReturn(Optional.of(authors.get(0)));
+        when(bookRepositoryMock.getBooksByAuthorIds(expectedAuthorIds))
+                .thenReturn(Collections.singletonList(books.get(0)));
+
+        System.out.println(firstAuthorId);
+        System.out.println(books.get(0).getAuthorId());
+
+        List<BookDTO> result = bookService.searchBooksByAuthor("a1*");
+
+        verify(bookRepositoryMock).getBooksByAuthorIds(expectedAuthorIds);
+        assertThat(result)
+                .isNotEmpty()
+                .extracting(BookDTO::author)
+                .extracting(AuthorDTO::firstname)
+                .contains("a1_firstname");
+    }
+
+    @Test
+    void getListOfBooks_WhenNonExistingAuthorIsPassedOnToRequestBooksByAuthor() {
+        List<BookDTO> result = bookService.searchBooksByAuthor("a1*");
+
+        assertThat(result).isEmpty();
+
+    }
+
 }
