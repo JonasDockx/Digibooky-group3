@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -49,5 +51,21 @@ public class BookService {
     private Author getAuthorById(String id) {
         return authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
+    }
+
+    public List<BookDTO> searchBooksByAuthor(String name) {
+        logger.info("Received search books by author request");
+        if (name == null || name.isBlank()) {
+            logger.warn("Not possible to fetch books for a blank name");
+            throw new IllegalArgumentException("Author name must not be blank");
+        }
+        Set<String> authorIds = authorRepository.getAuthorsByName(name).stream()
+                .map(Author::getId)
+                .collect(Collectors.toSet());
+        List<BookDTO> bookDTOS = bookRepository.getBooksByAuthorIds(authorIds).stream()
+                .map(book -> mapToDto(book, book.getAuthorId()))
+                .toList();
+        logger.info("Fetched books with size {}", bookDTOS.size());
+        return  bookDTOS;
     }
 }

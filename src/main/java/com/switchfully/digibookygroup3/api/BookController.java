@@ -2,6 +2,7 @@ package com.switchfully.digibookygroup3.api;
 
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.service.BookService;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,4 +26,9 @@ public class BookController {
         return bookService.getAllBooks();
     }
 
+    @GetMapping(path = "/search", produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public List<BookDTO> getBooksByAuthorName(@PathParam("authorname") String name) {
+        return bookService.searchBooksByAuthor(name);
+    }
 }
