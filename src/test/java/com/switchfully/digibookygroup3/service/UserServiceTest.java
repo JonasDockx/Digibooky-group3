@@ -1,6 +1,9 @@
 package com.switchfully.digibookygroup3.service;
 
+import com.switchfully.digibookygroup3.api.MemberMapper;
+import com.switchfully.digibookygroup3.api.dtos.CreateLibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
+import com.switchfully.digibookygroup3.api.dtos.LibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.user.Member;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
@@ -20,9 +23,12 @@ class UserServiceTest {
     private int port;
     private static final String ADMIN_USERNAME = "admin@admin.com";
     private static final String ADMIN_PASSWORD = "pass";
+    private static final String BASE_URL = "http://localhost:";
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private MemberMapper memberMapper;
 
     @BeforeEach
     void setupUserRepository() {
@@ -148,6 +154,76 @@ class UserServiceTest {
                 .basic("member1@member.com", "pass")
                 .when()
                 .get("http://localhost:" + port + "/members")
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    void createLibrarian_givenCorrectCredentialsAndBody_thenCreateALibrarian() {
+        CreateLibrarianDTO createLibrarianDTO = new CreateLibrarianDTO(
+                "Librarian",
+                "Mister",
+                "librarian@libarian.com",
+                "pass"
+        );
+
+        LibrarianDTO librarian = given()
+                .contentType(ContentType.JSON)
+                .body(createLibrarianDTO)
+                .auth()
+                .preemptive()
+                .basic(ADMIN_USERNAME, ADMIN_PASSWORD)
+                .when()
+                .post(BASE_URL + port + "/members/librarians")
+                .then()
+                .statusCode(201)
+                .extract()
+                .as(LibrarianDTO.class);
+
+        assertThat(librarian).isNotNull();
+        assertThat(librarian.getEmail().equals("librarian@libarian.com"));
+    }
+
+    @Test
+    void createLibrarian_givenWrongCredentials_thenReturn401Response() {
+        CreateLibrarianDTO createLibrarianDTO = new CreateLibrarianDTO(
+                "Librarian",
+                "Mister",
+                "librarian@libarian.com",
+                "pass"
+        );
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(createLibrarianDTO)
+                .auth()
+                .preemptive()
+                .basic(ADMIN_USERNAME, "wrong password")
+                .when()
+                .post(BASE_URL + port + "/members/librarians")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    void createLibrarian_givenMemberThatTriesToCall_thenReturn403Response() {
+        CreateLibrarianDTO createLibrarianDTO = new CreateLibrarianDTO(
+                "Librarian",
+                "Mister",
+                "librarian@libarian.com",
+                "pass"
+        );
+
+        Member member = userRepository.getAllMembers().get(0);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(createLibrarianDTO)
+                .auth()
+                .preemptive()
+                .basic(member.getEmail(), member.getPassword())
+                .when()
+                .post(BASE_URL + port + "/members/librarians")
                 .then()
                 .statusCode(403);
     }

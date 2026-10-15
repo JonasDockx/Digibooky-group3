@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -54,18 +56,24 @@ public class BookService {
     private BookDTO mapToDto(Book book) {
 //        In order to build the book DTO, we also need the author DTO. This function assembles
 //        the book DTO and author DTO
-        AuthorDTO authorDTO = authorMapper.toDto(getAuthorById(book.getAuthorId()));
-        return bookMapper.toDto(book, authorDTO);
+        logger.info("Mapping a book to a BookDTO");
+        return bookMapper.toDto(book, getAuthorDTOById(book.getAuthorId()));
     }
 
     private BookWithSummaryDTO mapToDtoWithSummary(Book book) {
-        AuthorDTO authorDTO = authorMapper.toDto(getAuthorById(book.getAuthorId()));
-        return bookMapper.toDtoWithSummary(book, authorDTO);
+        logger.info("Mapping a book to a BookWithSummaryDTO");
+        return bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
     }
 
     private Author getAuthorById(String id) {
         return authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
+    }
+    private AuthorDTO getAuthorDTOById(String id) {
+        logger.info("Received getAuthorDTOById request with id {}", id);
+        Author author = authorRepository.getById(id)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
+        return authorMapper.toDto(author);
     }
 
     private Book getBookByIdOrElse(String id) {
@@ -74,10 +82,36 @@ public class BookService {
     }
 
     public List<BookDTO> getBookByISBN(String isbn) {
+        logger.info("Received getBookByISBN request with ISBN {}", isbn);
         return bookRepository.getBooksByISBNNumber(isbn)
                 .stream()
                 .map(this::mapToDto)
                 .toList();
+    }
+
+    public List<BookDTO> getBookByTitle(String title) {
+        logger.info("Received getBookByTitle request with title {}", title);
+        return bookRepository.getBooksByTitle(title)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+
+    }
+
+    public List<BookDTO> searchBooksByAuthor(String name) {
+        logger.info("Received search books by author request");
+        if (name == null || name.isBlank()) {
+            logger.warn("Not possible to fetch books for a blank name");
+            throw new IllegalArgumentException("Author name must not be blank");
+        }
+        Set<String> authorIds = authorRepository.getAuthorsByName(name).stream()
+                .map(Author::getId)
+                .collect(Collectors.toSet());
+        List<BookDTO> bookDTOS = bookRepository.getBooksByAuthorIds(authorIds).stream()
+                .map(this::mapToDto)
+                .toList();
+        logger.info("Fetched books with size {}", bookDTOS.size());
+        return bookDTOS;
     }
 
     public BookWithSummaryDTO updateBook(UpdateBookDTO updateBookDTO, String id) {
