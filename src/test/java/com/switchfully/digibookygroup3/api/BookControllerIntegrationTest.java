@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -102,7 +101,7 @@ class BookControllerIntegrationTest {
 
         BookDTO[] filteredBooks = RestAssured.given()
                 .port(port)
-                .get("/books?isbn=*543*")
+                .get("/books/search?isbn=*543*")
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(BookDTO[].class);
@@ -116,7 +115,7 @@ class BookControllerIntegrationTest {
 
         BookDTO[] filteredBooks = RestAssured.given()
                 .port(port)
-                .get("/books?isbn=*543*")
+                .get("/books/search?isbn=*543*")
                 .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(BookDTO[].class);
