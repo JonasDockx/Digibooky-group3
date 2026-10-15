@@ -99,11 +99,12 @@ class BookServiceTest {
         verify(authorRepositoryMock).getById(author.getId());
 
         assertThat(bookWithSummaryDTO).isNotNull();
-        assertThat(bookWithSummaryDTO).isEqualTo(new BookWithSummaryDTO(
-                book.getId(), book.getTitle(), book.getIsbn(),
-                new AuthorDTO(author.getId(), author.getFirstname(), author.getLastname()),
-                book.getSummary()
-        ));
+        assertThat(bookWithSummaryDTO.getSummary()).isEqualTo(book.getSummary());
+        assertThat(bookWithSummaryDTO.getId()).isEqualTo(book.getId());
+        assertThat(bookWithSummaryDTO.getTitle()).isEqualTo(book.getTitle());
+        assertThat(bookWithSummaryDTO.getIsbn()).isEqualTo(book.getIsbn());
+        assertThat(bookWithSummaryDTO.getAuthorDTO())
+                .isEqualTo(new AuthorDTO(author.getId(), author.getFirstname(), author.getLastname()));
     }
 
     @Test
@@ -238,25 +239,25 @@ class BookServiceTest {
 
     @Test
     void getListOfBooks_WhenExistingAuthorIsPassedOnToRequestBooksByAuthor() {
-        List<Author> authors = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
+        List<Author> authorList = new LinkedList<>(List.of(new Author("a1_firstname", "a1_lastname"),
                 new Author("a2_firstname", "a2_lastname")));
-        String firstAuthorId = authors.get(0).getId();
-        String secondAuthorId = authors.get(1).getId();
+        String firstAuthorId = authorList.get(0).getId();
+        String secondAuthorId = authorList.get(1).getId();
 
-        List<Book> books = new LinkedList<>(List.of(new Book("ISBN1", "title1", firstAuthorId, "summary"),
+        List<Book> bookList = new LinkedList<>(List.of(new Book("ISBN1", "title1", firstAuthorId, "summary"),
                 new Book("ISBN2", "title2", secondAuthorId, "summary")));
 
         Set<String> expectedAuthorIds = Set.of(firstAuthorId);
 
         when(authorRepositoryMock.getAuthorsByName("a1*"))
-                .thenReturn(List.of(authors.get(0)));
+                .thenReturn(List.of(authorList.get(0)));
         when(authorRepositoryMock.getById(firstAuthorId))
-                .thenReturn(Optional.of(authors.get(0)));
+                .thenReturn(Optional.of(authorList.get(0)));
         when(bookRepositoryMock.getBooksByAuthorIds(expectedAuthorIds))
-                .thenReturn(Collections.singletonList(books.get(0)));
+                .thenReturn(Collections.singletonList(bookList.get(0)));
 
         System.out.println(firstAuthorId);
-        System.out.println(books.get(0).getAuthorId());
+        System.out.println(bookList.get(0).getAuthorId());
 
         List<BookDTO> result = bookService.searchBooksByAuthor("a1*");
 
@@ -293,7 +294,8 @@ class BookServiceTest {
         when(bookRepositoryMock.getBydId(book.getId()))
                 .thenReturn(Optional.of(book));
 
-        assertThatThrownBy(()-> bookService.deleteBook(book.getId()))
+        String bookId = book.getId();
+        assertThatThrownBy(()-> bookService.deleteBook(bookId))
                 .isInstanceOf(BookNotFoundException.class)
                 .hasMessage("Book not found with id " + book.getId());
     }

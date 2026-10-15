@@ -9,7 +9,6 @@ import com.switchfully.digibookygroup3.domain.book.BookRepository;
 import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,11 +33,8 @@ class BookControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    Book book;
+    private Book book;
 
-    @BeforeEach
-    void setUp() {
-    }
 
     private void addBooksAndAuthors() {
         Author author = new Author("Jonas", "Dockx");
@@ -127,6 +123,41 @@ class BookControllerIntegrationTest {
 
         assertEquals(0, filteredBooks.length);
     }
+
+    @Test
+    void searchBookByTitle_givenABook_whenSearchByTitle_thenBookPresent() {
+        addBooksAndAuthors();
+        Author author = new Author("Test", "Test");
+        authorRepository.addAuthor(author);
+        bookRepository.addBook(new Book("00002", "Titles", author.getId(), "Test summary"));
+
+        BookDTO[] filteredBooks = RestAssured.given()
+                .port(port)
+                .get("/books/search?title=titles")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(BookDTO[].class);
+
+        assertEquals(1, filteredBooks.length);
+    }
+
+    @Test
+    void searchBookByAuthor_givenABook_whenSearchByAuthor_thenBookPresent() {
+        addBooksAndAuthors();
+        Author author = new Author("TestName", "Test");
+        authorRepository.addAuthor(author);
+        bookRepository.addBook(new Book("00002", "Wrong", author.getId(), "Test summary"));
+
+        BookDTO[] filteredBooks = RestAssured.given()
+                .port(port)
+                .get("/books/search?authorname=*Name")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(BookDTO[].class);
+
+        assertEquals(1, filteredBooks.length);
+    }
+
 
     @Test
     void deleteBook_givenAnInvalidUserAnExistingBook_whenDeleteBook_thenReturnsUnauthorized() {
