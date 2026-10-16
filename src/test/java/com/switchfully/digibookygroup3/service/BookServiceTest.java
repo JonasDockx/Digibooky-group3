@@ -2,12 +2,16 @@ package com.switchfully.digibookygroup3.service;
 
 import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookDTO;
+import com.switchfully.digibookygroup3.api.dtos.BookWithAllDetailsDTO;
 import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
+import com.switchfully.digibookygroup3.domain.loan.Loan;
 import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
+import com.switchfully.digibookygroup3.domain.user.Member;
+import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
@@ -33,6 +37,7 @@ class BookServiceTest {
     void setup() {
         bookRepositoryMock = mock(BookRepository.class);
         authorRepositoryMock = mock(AuthorRepository.class);
+        loanRepositoryMock = mock(LoanRepository.class);
         bookService = new BookService(bookRepositoryMock, authorRepositoryMock,
                 new BookMapper(new AuthorRepository(), new LoanRepository()), new AuthorMapper(), loanRepositoryMock);
         addAuthorsAndBooks();
@@ -332,5 +337,31 @@ class BookServiceTest {
         assertThatThrownBy(()-> bookService.restoreBook("invalidId"))
                 .isInstanceOf(BookNotFoundException.class)
                 .hasMessage("Book not found with id invalidId");
+    }
+
+    @Test
+    void showBookDetails_givenLoanedBook_thenReturnDtoContainingLoaningInfos() {
+        BookRepository bookRepository = new BookRepository();
+        LoanRepository loanRepository = new LoanRepository();
+
+        User user = new Member(
+                "5494",
+                "member",
+                "member",
+                "member@member.com",
+                "memberstreet",
+                "45",
+                "4554",
+                "Brussels",
+                "password"
+        );
+        String bookId = books.get(0).getId();
+        when(bookRepositoryMock.getBydId(bookId)).thenReturn(Optional.ofNullable(books.get(0)));
+        bookRepository.save(books.get(0));
+        loanRepository.save(new Loan(user.getId(), bookId));
+
+        assertThat(bookService.getBookById(books.get(0).getId())).isInstanceOf(BookWithAllDetailsDTO.class);
+
+        bookService.getBookById(bookId);
     }
 }
