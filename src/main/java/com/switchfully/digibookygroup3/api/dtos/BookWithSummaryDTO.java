@@ -13,8 +13,4 @@ public class BookWithSummaryDTO extends BookDTO {
         return summary;
     }
 
-    public String getBorrowerId() {
-        return "";
-    };
-
 }

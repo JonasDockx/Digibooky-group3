@@ -10,7 +10,6 @@ import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
-import org.jspecify.annotations.NonNull;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,13 +76,17 @@ public class BookService {
 
     private BookWithAllDetailsDTO mapToDtoWithAllDetails(Book book) {
         logger.info("Mapping a book to a BookWithSAllDetailsDTO");
-        return bookMapper.toDtoWithAllDetails(book, getAuthorDTOById(book.getAuthorId()));
+
+        String userId =  loanRepository.getUserIdByBookId(book.getId());
+
+        return bookMapper.toDtoWithAllDetails(book, getAuthorDTOById(book.getAuthorId()), userId);
     }
 
     private Author getAuthorById(String id) {
         return authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
     }
+
     private AuthorDTO getAuthorDTOById(String id) {
         logger.info("Received getAuthorDTOById request with id {}", id);
         Author author = authorRepository.getById(id)

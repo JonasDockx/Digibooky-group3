@@ -27,7 +27,8 @@ public class LoanService {
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
 
-    public LoanService(BookRepository bookRepository, UserRepository userRepository, LoanRepository loanRepository, LoanMapper loanMapper, BookMapper bookMapper, AuthorRepository authorRepository, AuthorMapper authorMapper) {
+    public LoanService(BookRepository bookRepository, UserRepository userRepository, LoanRepository loanRepository,
+                       LoanMapper loanMapper, BookMapper bookMapper, AuthorRepository authorRepository, AuthorMapper authorMapper) {
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
         this.loanRepository = loanRepository;
