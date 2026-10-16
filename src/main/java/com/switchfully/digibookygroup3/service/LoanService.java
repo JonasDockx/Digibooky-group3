@@ -1,6 +1,8 @@
 package com.switchfully.digibookygroup3.service;
 
+import com.switchfully.digibookygroup3.api.dtos.BookDTO;
 import com.switchfully.digibookygroup3.api.dtos.LoanDTO;
+import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
 import com.switchfully.digibookygroup3.domain.loan.Loan;
@@ -10,11 +12,14 @@ import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookUnavailableException;
 import com.switchfully.digibookygroup3.exception.UserNotFoundException;
+import com.switchfully.digibookygroup3.mapper.AuthorMapper;
+import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.mapper.LoanMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class LoanService {
@@ -24,12 +29,30 @@ public class LoanService {
     private final UserRepository userRepository;
     private final LoanRepository loanRepository;
     private final LoanMapper loanMapper;
+    private final BookMapper bookMapper;
+    private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
-    public LoanService(BookRepository bookRepository, UserRepository userRepository, LoanRepository loanRepository, LoanMapper loanMapper) {
+    public LoanService(BookRepository bookRepository, UserRepository userRepository, LoanRepository loanRepository, LoanMapper loanMapper, BookMapper bookMapper, AuthorRepository authorRepository, AuthorMapper authorMapper) {
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
         this.loanRepository = loanRepository;
         this.loanMapper = loanMapper;
+        this.bookMapper = bookMapper;
+        this.authorRepository = authorRepository;
+        this.authorMapper = authorMapper;
+    }
+
+    public List<BookDTO> getLentBooksByUser(String id) {
+        List<Loan> loans = loanRepository.getLoans();
+        List<Loan> filteredLoans = loans.stream()
+                .filter(loan -> loan.getUserId().equals(id))
+                .toList();
+
+        return filteredLoans.stream()
+                .map(loan -> getBookById(loan.getBookId()))
+                .map(book -> bookMapper.toDto(book, authorMapper.toDto(authorRepository.getById(book.getAuthorId()).get())))
+                .toList();
     }
 
     public LoanDTO lendABook(String bookId, String userId) {

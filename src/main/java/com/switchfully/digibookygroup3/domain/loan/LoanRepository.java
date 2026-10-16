@@ -2,6 +2,8 @@ package com.switchfully.digibookygroup3.domain.loan;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,5 +18,9 @@ public class LoanRepository {
     public Loan save(Loan loan) {
         loans.put(loan.getId(), loan);
         return loan;
+    }
+
+    public List<Loan> getLoans() {
+        return new ArrayList<>(loans.values());
     }
 }

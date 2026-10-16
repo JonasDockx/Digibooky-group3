@@ -9,6 +9,7 @@ import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
+import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
 import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
@@ -31,12 +32,14 @@ public class BookService {
     private final AuthorRepository authorRepository;
     private final BookMapper bookMapper;
     private final AuthorMapper authorMapper;
+    private final LoanRepository loanRepository;
 
-    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, BookMapper bookMapper, AuthorMapper authorMapper) {
+    public BookService(BookRepository bookRepository, AuthorRepository authorRepository, BookMapper bookMapper, AuthorMapper authorMapper, LoanRepository loanRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.bookMapper = bookMapper;
         this.authorMapper = authorMapper;
+        this.loanRepository = loanRepository;
     }
 
     public List<BookDTO> getAllBooks() {
