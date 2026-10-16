@@ -7,6 +7,7 @@ import com.switchfully.digibookygroup3.domain.loan.Loan;
 import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
 import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
+import com.switchfully.digibookygroup3.exception.BookNotFoundByIsbnException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookUnavailableException;
 import com.switchfully.digibookygroup3.exception.UserNotFoundException;
@@ -32,22 +33,22 @@ public class LoanService {
         this.loanMapper = loanMapper;
     }
 
-    public LoanDTO lendABook(String bookId, String userId) {
-        doesUserExist(userId);
-        Book book = getBookById(bookId);
+    public LoanDTO lendABook(String bookIsbn, String userId) {
+            doesUserExist(userId);
+            Book book = getBookByIsbn(bookIsbn);
 
-        if (!book.isAvailable()) {
-            throw new BookUnavailableException(bookId);
-        }
+            if (!book.isAvailable()) {
+                throw new BookUnavailableException(bookIsbn);
+            }
 
-        Loan loan = loanRepository.save(new Loan(userId, bookId));
-        book.markAsUnavailable();
-        return loanMapper.mapToDTO(loan, book.getIsbn());
+            Loan loan = loanRepository.save(new Loan(userId, book.getId()));
+            book.markAsUnavailable();
+            return loanMapper.mapToDTO(loan, book.getIsbn());
     }
 
-    private Book getBookById(String bookId) {
-        return bookRepository.getBydId(bookId)
-                .orElseThrow(() -> new BookNotFoundException(bookId));
+    private Book getBookByIsbn(String bookIsbn) {
+        return bookRepository.getBookByIsbn(bookIsbn)
+                .orElseThrow(() -> new BookNotFoundByIsbnException(bookIsbn));
     }
 
     private void doesUserExist(String userId) {
