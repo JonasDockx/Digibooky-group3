@@ -14,6 +14,7 @@ import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,13 @@ class BookControllerIntegrationTest {
     private UserRepository userRepository;
 
     private Book book;
+
+    @BeforeEach
+    void cleanRepositories() {
+        userRepository.resetMembers();
+        bookRepository.clear();
+        authorRepository.clear();
+    }
 
 
     private void addBooksAndAuthors() {

@@ -75,4 +75,8 @@ public class BookRepository {
     public void restoreBook(Book book) {
         book.restoreBook();
     }
+
+    public void clear() {
+        books.clear();
+    }
 }
