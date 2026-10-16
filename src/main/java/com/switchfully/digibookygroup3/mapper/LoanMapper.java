@@ -11,6 +11,6 @@ public class LoanMapper {
         if (loan == null) {
             return null;
         }
-        return new LoanDTO(loan.getId(), loan.getUserId(), bookIsbn, loan.getReturnDate());
+        return new LoanDTO(loan.getId(), loan.getUserId(), bookIsbn, loan.getDueDate());
     }
 }

@@ -43,4 +43,11 @@ public class LoanController {
         securityService.validateAuthorization(authorization, Feature.VIEW_LENT_BOOKS);
         return loanService.getLentBooksByUser(id);
     }
+
+    @PostMapping(path = "/return/{id}", produces = APPLICATION_JSON)
+    @ResponseStatus(HttpStatus.OK)
+    public String returnBooks(@RequestHeader(value = "Authorization", required = false) String authorization, @PathVariable("id") String id) {
+        securityService.validateAuthorization(authorization, Feature.RETURN);
+        return loanService.returnBook(id);
+    }
 }

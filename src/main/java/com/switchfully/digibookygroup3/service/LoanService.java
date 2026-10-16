@@ -7,19 +7,15 @@ import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
 import com.switchfully.digibookygroup3.domain.loan.Loan;
 import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
-import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
-import com.switchfully.digibookygroup3.exception.BookNotFoundByIsbnException;
-import com.switchfully.digibookygroup3.exception.BookNotFoundException;
-import com.switchfully.digibookygroup3.exception.BookUnavailableException;
-import com.switchfully.digibookygroup3.exception.UserNotFoundException;
+import com.switchfully.digibookygroup3.exception.*;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.mapper.LoanMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -84,4 +80,20 @@ public class LoanService {
                 .orElseThrow(() -> new UserNotFoundException(userId));
     }
 
+    public String returnBook(String id) {
+        String response = "You book has been returned";
+        Loan loan = loanRepository.getLoanById(id)
+                        .orElseThrow(() -> new LoanNotFoundException(id));
+        Book book = getBookById(loan.getBookId());
+
+        loan.markAsInactive();
+        book.markAsAvailable();
+        LocalDate now = LocalDate.now();
+
+        if(loan.getDueDate().isBefore(now)){
+            long daysBetween = ChronoUnit.DAYS.between(loan.getDueDate(), now);
+            response += " with " + daysBetween + " days overdue";
+        }
+        return response;
+    }
 }
