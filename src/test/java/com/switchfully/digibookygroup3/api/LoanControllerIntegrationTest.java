@@ -4,6 +4,7 @@ import com.switchfully.digibookygroup3.api.dtos.CreateLoanDTO;
 import com.switchfully.digibookygroup3.api.dtos.LoanDTO;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
+import com.switchfully.digibookygroup3.domain.loan.Loan;
 import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
 import com.switchfully.digibookygroup3.domain.user.Member;
 import com.switchfully.digibookygroup3.domain.user.User;
@@ -40,6 +41,7 @@ public class LoanControllerIntegrationTest {
     private Book availableBook;
     private Book unavailableBook;
     private User user;
+    private Loan loan;
 
 
     private void addBooks() {
@@ -62,6 +64,10 @@ public class LoanControllerIntegrationTest {
                 "member",
                 "pass");
         userRepository.addUser(user);
+    }
+
+    private void addLoan(){
+        loan = new Loan(user.getId(), unavailableBook.getId());
     }
 
     @Test
