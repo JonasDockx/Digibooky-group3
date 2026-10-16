@@ -9,11 +9,6 @@ public class BookWithAllDetailsDTO extends BookWithSummaryDTO {
         this.borrowerId = memberId;
     }
 
-    public boolean isLoanedOut() {
-        return true;
-    }
-
-    @Override
     public String getBorrowerId() {
         return borrowerId;
     }

@@ -10,19 +10,15 @@ import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
 import com.switchfully.digibookygroup3.domain.user.Member;
 import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
-import com.switchfully.digibookygroup3.domain.user.UserType;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.mapper.LoanMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class LoanServiceTest {
 
@@ -30,12 +26,7 @@ class LoanServiceTest {
     private LoanRepository loanRepository;
     private AuthorRepository authorRepository;
     private UserRepository userRepository;
-    private LoanMapper loanMapper;
-    private BookMapper bookMapper;
-    private AuthorMapper authorMapper;
     private LoanService loanService;
-    private List<Author> authors;
-    private List<Book> books;
 
     @BeforeEach
     void setUp() {
@@ -43,17 +34,14 @@ class LoanServiceTest {
         loanRepository = new LoanRepository();
         authorRepository = new AuthorRepository();
         userRepository = new UserRepository();
-        loanMapper = new LoanMapper();
-        bookMapper = new BookMapper(authorRepository, loanRepository);
-        authorMapper = new AuthorMapper();
         loanService = new LoanService(
                 bookRepository,
                 userRepository,
                 loanRepository,
-                loanMapper,
-                bookMapper,
+                new LoanMapper(),
+                new BookMapper(),
                 authorRepository,
-                authorMapper
+                new AuthorMapper()
         );
     }
 
@@ -86,7 +74,7 @@ class LoanServiceTest {
 
         List<BookDTO> result = loanService.getLentBooksByUser(userId);
 
-        Assertions.assertThat(result.size()).isEqualTo(1);
+        Assertions.assertThat(result).hasSize(1);
     }
 
     @Test
@@ -125,7 +113,7 @@ class LoanServiceTest {
 
         List<BookDTO> result = loanService.getLentBooksByUser(userId);
 
-        Assertions.assertThat(result.size()).isEqualTo(2);
+        Assertions.assertThat(result).hasSize(2);
     }
 
     @Test
@@ -164,7 +152,7 @@ class LoanServiceTest {
 
         List<BookDTO> result = loanService.getAllOverdueBooks();
 
-        Assertions.assertThat(result.size()).isEqualTo(1);
+        Assertions.assertThat(result).hasSize(1);
     }
 
     @Test
@@ -203,6 +191,6 @@ class LoanServiceTest {
 
         List<BookDTO> result = loanService.getAllOverdueBooks();
 
-        Assertions.assertThat(result.size()).isEqualTo(0);
+        Assertions.assertThat(result).isEmpty();
     }
 }
