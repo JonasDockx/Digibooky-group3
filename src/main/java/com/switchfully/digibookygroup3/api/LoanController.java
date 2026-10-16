@@ -44,6 +44,13 @@ public class LoanController {
         return loanService.getLentBooksByUser(id);
     }
 
+    @PostMapping(path = "/return/{id}", produces = APPLICATION_JSON)
+    @ResponseStatus(HttpStatus.OK)
+    public String returnBooks(@RequestHeader(value = "Authorization", required = false) String authorization, @PathVariable("id") String id) {
+        securityService.validateAuthorization(authorization, Feature.RETURN_BOOK);
+        return loanService.returnBook(id);
+    }
+
     @GetMapping(value = "/overdue", produces = APPLICATION_JSON)
     @ResponseStatus(HttpStatus.OK)
     public List<BookDTO> viewOverdueBooks(@RequestHeader(value = "Authorization", required = false) String authorization) {
