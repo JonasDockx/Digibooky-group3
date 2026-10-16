@@ -1,4 +1,4 @@
-package com.switchfully.digibookygroup3.api;
+package com.switchfully.digibookygroup3.mapper;
 
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;

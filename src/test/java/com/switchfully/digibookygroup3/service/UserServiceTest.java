@@ -1,6 +1,6 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.MemberMapper;
+import com.switchfully.digibookygroup3.mapper.MemberMapper;
 import com.switchfully.digibookygroup3.api.dtos.CreateLibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.CreateMemberDTO;
 import com.switchfully.digibookygroup3.api.dtos.LibrarianDTO;

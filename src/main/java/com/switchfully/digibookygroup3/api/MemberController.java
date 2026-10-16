@@ -6,7 +6,6 @@ import com.switchfully.digibookygroup3.api.dtos.LibrarianDTO;
 import com.switchfully.digibookygroup3.api.dtos.MemberDTO;
 import com.switchfully.digibookygroup3.domain.user.Feature;
 import com.switchfully.digibookygroup3.domain.user.Member;
-import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.service.SecurityService;
 import com.switchfully.digibookygroup3.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;

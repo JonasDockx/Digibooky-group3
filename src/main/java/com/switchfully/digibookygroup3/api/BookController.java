@@ -5,18 +5,16 @@ import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
 import com.switchfully.digibookygroup3.domain.user.Feature;
 import com.switchfully.digibookygroup3.api.dtos.UpdateBookDTO;
 import com.switchfully.digibookygroup3.api.dtos.CreateBookDTO;
-import com.switchfully.digibookygroup3.api.dtos.CreateLibrarianDTO;
-import com.switchfully.digibookygroup3.domain.user.Feature;
 import com.switchfully.digibookygroup3.service.BookService;
 import com.switchfully.digibookygroup3.service.SecurityService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
-import com.switchfully.digibookygroup3.service.SecurityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Books")
 @RestController
 @RequestMapping(value = "/books")
 public class BookController {

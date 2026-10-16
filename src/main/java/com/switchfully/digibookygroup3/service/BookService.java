@@ -165,8 +165,14 @@ public class BookService {
     }
 
     public BookDTO addBook(@Valid CreateBookDTO dto) {
-        List<Author> authors = authorRepository.getAuthorsByName(dto.getAuthorFirstname() + " " + dto.getAuthorLastname());
-        String authorId = authors.get(0).getId();
+        String authorId;
+        try {
+            authorId = authorRepository.getAuthorsByName(dto.getAuthorFirstname() + " " + dto.getAuthorLastname()).getFirst().getId();
+        } catch (AuthorNotFoundException e) {
+            Author author = new Author(dto.getAuthorFirstname(), dto.getAuthorLastname());
+            authorRepository.addAuthor(author);
+            authorId = author.getId();
+        }
 
         Book book = bookMapper.mapDTOToBook(dto, authorId);
         bookRepository.save(book);

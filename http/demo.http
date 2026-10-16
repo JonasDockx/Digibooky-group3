@@ -1,0 +1,83 @@
+### Get all books as User
+GET http://localhost:8080/books
+
+### Get book by id as User
+GET http://localhost:8080/books/1e6ba19a-ab0d-440e-8105-3cb150c92c91
+
+### Search books by isbn as User
+GET http://localhost:8080/books/search?isbn=0123*
+
+### Search books by authorname as User
+GET http://localhost:8080/books/search?authorname=a*
+
+### Register a librarian as Admin
+POST http://localhost:8080/members/librarians
+Authorization: Basic YWRtaW5AYWRtaW4uY29tOnBhc3M=
+Content-Type: application/json
+
+{
+  "lastname": "Librarian",
+  "firstname": "demo",
+  "email": "demo.librarian@email.com",
+  "password" : "lib_password"
+}
+
+### Register a book as Librarian
+POST localhost:8080/books
+Authorization: Basic ZGVtby5saWJyYXJpYW5AZW1haWwuY29tOmxpYl9wYXNzd29yZA==
+Content-Type: application/json
+
+{
+  "isbn" : "0123456789",
+  "title" : "b2_title",
+  "authorLastname" : "a_lastname",
+  "authorFirstname" : "a_firstName",
+  "summary" : "b2_summary"
+}
+
+### Delete a book as Librarian
+DELETE localhost:8080/books/d4eb1ddf-dfc9-46d5-b033-109291f6163d
+Authorization: Basic ZGVtby5saWJyYXJpYW5AZW1haWwuY29tOmxpYl9wYXNzd29yZA==
+
+### Restore a book as Librarian
+PUT localhost:8080/books/restore/d4eb1ddf-dfc9-46d5-b033-109291f6163d
+Authorization: Basic ZGVtby5saWJyYXJpYW5AZW1haWwuY29tOmxpYl9wYXNzd29yZA==
+
+### Get all member as Admin
+GET localhost:8080/members
+Authorization: Basic YWRtaW5AYWRtaW4uY29tOnBhc3M=
+
+### Register a member as User
+POST localhost:8080/members
+Content-Type: application/json
+
+{
+  "inss": "m_inss",
+  "lastname": "m_lastname",
+  "firstname": "m_firstname",
+  "email": "m@email.com",
+  "streetName": "m_street",
+  "streetNumber": "8080" ,
+  "postalCode": "m_postalCode",
+  "city": "m_city",
+  "password" : "m_password"
+}
+
+### Get lent books by userId as Librarian
+GET localhost:8080/loans/263bfe25-55e1-4b22-8b04-08588f8b132e
+Authorization: Basic ZGVtby5saWJyYXJpYW5AZW1haWwuY29tOmxpYl9wYXNzd29yZA==
+
+
+### Lend a Book as Member
+POST localhost:8080/loans
+Authorization: Basic bUBlbWFpbC5jb206bV9wYXNzd29yZA==
+Content-Type: application/json
+
+{
+  "userId" : "263bfe25-55e1-4b22-8b04-08588f8b132e",
+  "bookIsbn": "0123456"
+}
+
+### Return a Book as Member
+POST localhost:8080/loans/return/fbc50d1b-1930-48c7-9d52-fa21189dbc7c
+Authorization: Basic bUBlbWFpbC5jb206bV9wYXNzd29yZA==
