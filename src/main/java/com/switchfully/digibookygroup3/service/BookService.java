@@ -13,6 +13,7 @@ import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
+import org.jspecify.annotations.NonNull;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +51,14 @@ public class BookService {
 
     public BookWithSummaryDTO getBookById(String id) {
         logger.info("Received getBookById request with id {}", id);
-        Book book = getBookByIdOrElse(id);
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
 
         return mapToDtoWithSummary(book);
+    }
+
+    private Book getBookByIdOrElseThrowBookNotFoundException(String id) {
+        return bookRepository.getBydId(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     private BookDTO mapToDto(Book book) {
@@ -76,11 +82,6 @@ public class BookService {
         Author author = authorRepository.getById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
         return authorMapper.toDto(author);
-    }
-
-    private Book getBookByIdOrElse(String id) {
-        return bookRepository.getBydId(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     public List<BookDTO> getBookByISBN(String isbn) {
@@ -116,10 +117,24 @@ public class BookService {
         return bookDTOS;
     }
 
+    public void deleteBook(String id) {
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
+        if (book.isDeleted()) {
+            throw new BookNotFoundException(id);
+        }
+        bookRepository.deleteBook(book);
+    }
+
+    public void restoreBook(String id) {
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
+
+        bookRepository.restoreBook(book);
+    }
+
     public BookWithSummaryDTO updateBook(UpdateBookDTO updateBookDTO, String id) {
         logger.info("Received update a book request with id {}", id);
         Author author = updateAuthor(updateBookDTO.authorDTO(), updateBookDTO.authorDTO().id());
-        Book book = getBookByIdOrElse(id);
+        Book book = getBookByIdOrElseThrowBookNotFoundException(id);
 
         book.setAuthorId(author.getId());
         book.setIsbn(updateBookDTO.isbn());

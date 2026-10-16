@@ -39,13 +39,11 @@ class BookControllerIntegrationTest {
     @Autowired
     private AuthorRepository authorRepository;
 
-    Book book;
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-    }
+    private Book book;
+
 
     private void addBooksAndAuthors() {
         Author author = new Author("Jonas", "Dockx");
@@ -192,6 +190,197 @@ class BookControllerIntegrationTest {
                 .extract().asString();
 
         assertEquals("Book not found with id 999", result);
+    }
+
+    @Test
+    void searchBookByTitle_givenABook_whenSearchByTitle_thenBookPresent() {
+        addBooksAndAuthors();
+        Author author = new Author("Test", "Test");
+        authorRepository.addAuthor(author);
+        bookRepository.save(new Book("00002", "Titles", author.getId(), "Test summary"));
+
+        BookDTO[] filteredBooks = RestAssured.given()
+                .port(port)
+                .get("/books/search?title=titles")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(BookDTO[].class);
+
+        assertEquals(1, filteredBooks.length);
+    }
+
+    @Test
+    void searchBookByAuthor_givenABook_whenSearchByAuthor_thenBookPresent() {
+        addBooksAndAuthors();
+        Author author = new Author("TestName", "Test");
+        authorRepository.addAuthor(author);
+        bookRepository.save(new Book("00002", "Wrong", author.getId(), "Test summary"));
+
+        BookDTO[] filteredBooks = RestAssured.given()
+                .port(port)
+                .get("/books/search?authorname=*Name")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(BookDTO[].class);
+
+        assertEquals(1, filteredBooks.length);
+    }
+
+
+    @Test
+    void deleteBook_givenAnInvalidUserAnExistingBook_whenDeleteBook_thenReturnsUnauthorized() {
+        addBooksAndAuthors();
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    void deleteBook_givenAnInvalidUserAnExistingBook_whenDeleteBook_thenReturnsForbidden() {
+        addBooksAndAuthors();
+        User admin = User.createAdmin("last", "first", "emailInvalid", "passwordInvalid");
+        userRepository.addUser(admin);
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(admin.getEmail(), admin.getPassword())
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void deleteBook_givenAValidUserAnExistingBook_whenDeleteBook_thenReturnsOK() {
+        addBooksAndAuthors();
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void deleteBook_givenAnExistingButDeletedBook_whenDeleteBook_thenThrowsBookNotFoundException() {
+        addBooksAndAuthors();
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+        book.softDelete();
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .delete("/books/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void deleteBook_givenNonExistingBook_whenDeleteBook_thenThrowsBookNotFoundException() {
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .delete("/books/Deleted")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void restoreBook_givenAnExistingButDeletedBook_whenRestoreBook_thenReturnsOK() {
+        addBooksAndAuthors();
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+        book.softDelete();
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .put("/books/restore/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void restoreBook_givenNonExistingBook_whenRestoreBook_thenThrowsBookNotFoundException() {
+        User librarian = User.createLibrarian("last", "first", "email", "password");
+        userRepository.addUser(librarian);
+
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(librarian.getEmail(), librarian.getPassword())
+                .port(port)
+                .put("/books/restore/invalid")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void restoreBook_givenAnInvalidUserAnExistingBook_whenRestoreBook_thenReturnsUnauthorized() {
+        addBooksAndAuthors();
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .port(port)
+                .put("/books/restore/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
+    void restoreBook_givenAnInvalidUserAnExistingBook_whenRestoreBook_thenReturnsForbidden() {
+        addBooksAndAuthors();
+        User admin = User.createAdmin("last", "first", "emailTest", "passwordtest");
+        userRepository.addUser(admin);
+
+        String bookId = book.getId();
+        RestAssured
+                .given()
+                .auth()
+                .preemptive()
+                .basic(admin.getEmail(), admin.getPassword())
+                .port(port)
+                .put("/books/restore/" + bookId)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
