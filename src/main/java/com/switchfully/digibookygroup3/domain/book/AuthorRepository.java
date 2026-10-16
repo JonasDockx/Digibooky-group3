@@ -1,5 +1,6 @@
 package com.switchfully.digibookygroup3.domain.book;
 
+import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
@@ -34,9 +35,15 @@ public class AuthorRepository {
 
     public List<Author> getAuthorsByName(String name) {
         Pattern pattern = toWildcardPattern(name);
-        return authors.values().stream()
+        List<Author> authorList =  authors.values().stream()
                 .filter(author -> pattern.matcher(author.getFirstname() + " " + author.getLastname()).find())
                 .toList();
+
+        if (authorList.isEmpty()) {
+            throw new AuthorNotFoundException("Author does not exist.");
+        }
+
+        return authorList;
     }
 
     private Pattern toWildcardPattern(String name) {

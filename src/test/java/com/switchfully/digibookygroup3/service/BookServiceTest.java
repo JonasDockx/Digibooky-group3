@@ -32,7 +32,7 @@ class BookServiceTest {
         bookRepositoryMock = mock(BookRepository.class);
         authorRepositoryMock = mock(AuthorRepository.class);
         bookService = new BookService(bookRepositoryMock, authorRepositoryMock,
-                new BookMapper(), new AuthorMapper());
+                new BookMapper(new AuthorRepository()), new AuthorMapper());
         addAuthorsAndBooks();
     }
 
