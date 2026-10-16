@@ -22,7 +22,6 @@ public class LoanController {
     private final LoanService loanService;
     private final BookService bookService;
     private SecurityService securityService;
-    private final SecurityService securityService;
 
     public LoanController(LoanService loanService, SecurityService securityService, BookRepository bookRepository, BookService bookService) {
 
@@ -35,7 +34,7 @@ public class LoanController {
     @ResponseStatus(HttpStatus.CREATED)
     public LoanDTO lendABook(@RequestHeader(value = "Authorization", required = false) String authorization, @RequestBody CreateLoanDTO createLoanDTO) {
         securityService.validateAuthorization(authorization, Feature.LEND_BOOK);
-        return loanService.lendABook(createLoanDTO.bookIsbn(), createLoanDTO.userId());
+        return loanService.lendABook(createLoanDTO.getBookIsbn(), createLoanDTO.getUserId());
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON)

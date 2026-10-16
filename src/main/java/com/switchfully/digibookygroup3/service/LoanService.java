@@ -74,6 +74,11 @@ public class LoanService {
                 .orElseThrow(() -> new BookNotFoundByIsbnException(bookIsbn));
     }
 
+    private Book getBookById(String bookId) {
+        return bookRepository.getBydId(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
+    }
+
     private void doesUserExist(String userId) {
         userRepository.getById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));

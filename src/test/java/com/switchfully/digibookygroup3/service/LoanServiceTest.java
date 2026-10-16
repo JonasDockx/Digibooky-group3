@@ -17,6 +17,7 @@ import com.switchfully.digibookygroup3.mapper.LoanMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -79,7 +80,7 @@ class LoanServiceTest {
 
         bookRepository.save(book);
 
-        Loan loan = new Loan(userId, bookID, LocalDate.now().plusDays(7));
+        Loan loan = new Loan(userId, bookID);
 
         loanRepository.save(loan);
 
@@ -116,8 +117,8 @@ class LoanServiceTest {
 
         bookRepository.save(book2);
 
-        Loan loan = new Loan(userId, bookID, LocalDate.now().plusDays(7));
-        Loan loan2 = new Loan(userId, book2ID, LocalDate.now().plusDays(7));
+        Loan loan = new Loan(userId, bookID);
+        Loan loan2 = new Loan(userId, book2ID);
 
         loanRepository.save(loan);
         loanRepository.save(loan2);
