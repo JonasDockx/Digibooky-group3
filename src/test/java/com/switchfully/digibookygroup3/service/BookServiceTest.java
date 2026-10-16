@@ -1,9 +1,6 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
-import com.switchfully.digibookygroup3.api.dtos.BookDTO;
-import com.switchfully.digibookygroup3.api.dtos.BookWithAllDetailsDTO;
-import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
+import com.switchfully.digibookygroup3.api.dtos.*;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
@@ -12,10 +9,12 @@ import com.switchfully.digibookygroup3.domain.loan.Loan;
 import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
 import com.switchfully.digibookygroup3.domain.user.Member;
 import com.switchfully.digibookygroup3.domain.user.User;
+import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
+import com.switchfully.digibookygroup3.mapper.LoanMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +26,7 @@ import static org.mockito.Mockito.*;
 
 class BookServiceTest {
     private BookService bookService;
+    private LoanService loanService;
     private BookRepository bookRepositoryMock;
     private AuthorRepository authorRepositoryMock;
     private LoanRepository loanRepositoryMock;
@@ -40,6 +40,14 @@ class BookServiceTest {
         loanRepositoryMock = mock(LoanRepository.class);
         bookService = new BookService(bookRepositoryMock, authorRepositoryMock,
                 new BookMapper(new AuthorRepository(), new LoanRepository()), new AuthorMapper(), loanRepositoryMock);
+        loanService = new LoanService(bookRepositoryMock,
+                new UserRepository(),
+                loanRepositoryMock,
+                new LoanMapper(),
+                new BookMapper(authorRepositoryMock, loanRepositoryMock),
+                authorRepositoryMock,
+                new AuthorMapper()
+                );
         addAuthorsAndBooks();
     }
 
@@ -341,27 +349,43 @@ class BookServiceTest {
 
     @Test
     void showBookDetails_givenLoanedBook_thenReturnDtoContainingLoaningInfos() {
-        BookRepository bookRepository = new BookRepository();
-        LoanRepository loanRepository = new LoanRepository();
-
+        Author author = authors.get(0);
+        Book book = books.get(0);
         User user = new Member(
-                "5494",
-                "member",
-                "member",
-                "member@member.com",
-                "memberstreet",
-                "45",
-                "4554",
-                "Brussels",
+                "123456789",
+                "lastName",
+                "firstName",
+                "mail@mail.com",
+                "streetName",
+                "123",
+                "4567",
+                "city",
                 "password"
         );
-        String bookId = books.get(0).getId();
-        when(bookRepositoryMock.getBydId(bookId)).thenReturn(Optional.ofNullable(books.get(0)));
-        bookRepository.save(books.get(0));
-        loanRepository.save(new Loan(user.getId(), bookId));
 
-        assertThat(bookService.getBookById(books.get(0).getId())).isInstanceOf(BookWithAllDetailsDTO.class);
+        when(bookRepositoryMock.getBydId(book.getId()))
+                .thenReturn(Optional.of(book));
+        when(authorRepositoryMock.getById(author.getId()))
+                .thenReturn(Optional.of(author));
+        when(loanRepositoryMock.getUserIdByBookId(user.getId()))
+                .thenReturn(user.getId());
 
-        bookService.getBookById(bookId);
+        LoanDTO loanDTO = loanService.lendABook(book.getIsbn(), user.getId());
+
+        BookWithSummaryDTO bookWithSummaryDTO = bookService.getBookById(book.getId());
+
+        verify(bookRepositoryMock).getBydId(book.getId());
+        verify(authorRepositoryMock).getById(author.getId());
+
+        assertThat(bookWithSummaryDTO).isNotNull();
+
+        assertThat(bookWithSummaryDTO.getSummary()).isEqualTo(book.getSummary());
+        assertThat(bookWithSummaryDTO.getBorrowerId()).isEqualTo(user.getId());
+        assertThat(bookWithSummaryDTO).isExactlyInstanceOf(BookWithAllDetailsDTO.class);
+        assertThat(bookWithSummaryDTO.getId()).isEqualTo(book.getId());
+        assertThat(bookWithSummaryDTO.getTitle()).isEqualTo(book.getTitle());
+        assertThat(bookWithSummaryDTO.getIsbn()).isEqualTo(book.getIsbn());
+        assertThat(bookWithSummaryDTO.getAuthorDTO())
+                .isEqualTo(new AuthorDTO(author.getId(), author.getFirstname(), author.getLastname()));
     }
 }

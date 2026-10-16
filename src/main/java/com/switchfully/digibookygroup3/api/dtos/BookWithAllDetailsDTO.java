@@ -13,6 +13,7 @@ public class BookWithAllDetailsDTO extends BookWithSummaryDTO {
         return true;
     }
 
+    @Override
     public String getBorrowerId() {
         return borrowerId;
     }
