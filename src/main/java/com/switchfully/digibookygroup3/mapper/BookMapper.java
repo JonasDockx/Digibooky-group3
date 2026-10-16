@@ -1,12 +1,11 @@
 package com.switchfully.digibookygroup3.mapper;
 
-import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
-import com.switchfully.digibookygroup3.api.dtos.BookDTO;
-import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
-import com.switchfully.digibookygroup3.api.dtos.CreateBookDTO;
+import com.switchfully.digibookygroup3.api.dtos.*;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
+import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
+import com.switchfully.digibookygroup3.service.LoanService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +14,11 @@ import java.util.List;
 @Component
 public class BookMapper {
     private final AuthorRepository authorRepository;
+    private final LoanRepository loanRepository;
 
-    public BookMapper(AuthorRepository authorRepository) {
+    public BookMapper(AuthorRepository authorRepository, LoanRepository loanRepository) {
         this.authorRepository = authorRepository;
+        this.loanRepository = loanRepository;
     }
 
     public BookDTO toDto(Book book, AuthorDTO authorDto) {
@@ -44,6 +45,21 @@ public class BookMapper {
                 book.getIsbn(),
                 authorDto,
                 book.getSummary()
+        );
+    }
+
+    public BookWithAllDetailsDTO toDtoWithAllDetails(Book book, AuthorDTO authorDto) {
+        if (book == null || authorDto == null) {
+            return null;
+        }
+
+        return new BookWithAllDetailsDTO(
+                book.getId(),
+                book.getTitle(),
+                book.getIsbn(),
+                authorDto,
+                book.getSummary(),
+                loanRepository.getUserIdByBookId(book.getId())
         );
     }
 

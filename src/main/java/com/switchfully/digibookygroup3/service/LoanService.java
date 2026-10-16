@@ -94,6 +94,4 @@ public class LoanService {
         userRepository.getById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
     }
-
-
 }

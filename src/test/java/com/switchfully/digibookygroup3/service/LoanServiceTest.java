@@ -44,7 +44,7 @@ class LoanServiceTest {
         authorRepository = new AuthorRepository();
         userRepository = new UserRepository();
         loanMapper = new LoanMapper();
-        bookMapper = new BookMapper(authorRepository);
+        bookMapper = new BookMapper(authorRepository, loanRepository);
         authorMapper = new AuthorMapper();
         loanService = new LoanService(
                 bookRepository,
