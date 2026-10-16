@@ -53,4 +53,7 @@ public class AuthorRepository {
         return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
     }
 
+    public void clear() {
+        authors.clear();
+    }
 }
