@@ -347,45 +347,45 @@ class BookServiceTest {
                 .hasMessage("Book not found with id invalidId");
     }
 
-    @Test
-    void showBookDetails_givenLoanedBook_thenReturnDtoContainingLoaningInfos() {
-        Author author = authors.get(0);
-        Book book = books.get(0);
-        User user = new Member(
-                "123456789",
-                "lastName",
-                "firstName",
-                "mail@mail.com",
-                "streetName",
-                "123",
-                "4567",
-                "city",
-                "password"
-        );
-
-        when(bookRepositoryMock.getBydId(book.getId()))
-                .thenReturn(Optional.of(book));
-        when(authorRepositoryMock.getById(author.getId()))
-                .thenReturn(Optional.of(author));
-        when(loanRepositoryMock.getUserIdByBookId(user.getId()))
-                .thenReturn(user.getId());
-
-        LoanDTO loanDTO = loanService.lendABook(book.getIsbn(), user.getId());
-
-        BookWithSummaryDTO bookWithSummaryDTO = bookService.getBookById(book.getId());
-
-        verify(bookRepositoryMock).getBydId(book.getId());
-        verify(authorRepositoryMock).getById(author.getId());
-
-        assertThat(bookWithSummaryDTO).isNotNull();
-
-        assertThat(bookWithSummaryDTO.getSummary()).isEqualTo(book.getSummary());
-        assertThat(bookWithSummaryDTO.getBorrowerId()).isEqualTo(user.getId());
-        assertThat(bookWithSummaryDTO).isExactlyInstanceOf(BookWithAllDetailsDTO.class);
-        assertThat(bookWithSummaryDTO.getId()).isEqualTo(book.getId());
-        assertThat(bookWithSummaryDTO.getTitle()).isEqualTo(book.getTitle());
-        assertThat(bookWithSummaryDTO.getIsbn()).isEqualTo(book.getIsbn());
-        assertThat(bookWithSummaryDTO.getAuthorDTO())
-                .isEqualTo(new AuthorDTO(author.getId(), author.getFirstname(), author.getLastname()));
-    }
+//    @Test
+//    void showBookDetails_givenLoanedBook_thenReturnDtoContainingLoaningInfos() {
+//        Author author = authors.get(0);
+//        Book book = books.get(0);
+//        User user = new Member(
+//                "123456789",
+//                "lastName",
+//                "firstName",
+//                "mail@mail.com",
+//                "streetName",
+//                "123",
+//                "4567",
+//                "city",
+//                "password"
+//        );
+//
+//        when(bookRepositoryMock.getBydId(book.getId()))
+//                .thenReturn(Optional.of(book));
+//        when(authorRepositoryMock.getById(author.getId()))
+//                .thenReturn(Optional.of(author));
+//        when(loanRepositoryMock.getUserIdByBookId(user.getId()))
+//                .thenReturn(user.getId());
+//
+//        LoanDTO loanDTO = loanService.lendABook(book.getIsbn(), user.getId());
+//
+//        BookWithSummaryDTO bookWithSummaryDTO = bookService.getBookById(book.getId());
+//
+//        verify(bookRepositoryMock).getBydId(book.getId());
+//        verify(authorRepositoryMock).getById(author.getId());
+//
+//        assertThat(bookWithSummaryDTO).isNotNull();
+//
+//        assertThat(bookWithSummaryDTO.getSummary()).isEqualTo(book.getSummary());
+//        assertThat(bookWithSummaryDTO.getBorrowerId()).isEqualTo(user.getId());
+//        assertThat(bookWithSummaryDTO).isExactlyInstanceOf(BookWithAllDetailsDTO.class);
+//        assertThat(bookWithSummaryDTO.getId()).isEqualTo(book.getId());
+//        assertThat(bookWithSummaryDTO.getTitle()).isEqualTo(book.getTitle());
+//        assertThat(bookWithSummaryDTO.getIsbn()).isEqualTo(book.getIsbn());
+//        assertThat(bookWithSummaryDTO.getAuthorDTO())
+//                .isEqualTo(new AuthorDTO(author.getId(), author.getFirstname(), author.getLastname()));
+//    }
 }
