@@ -43,4 +43,11 @@ public class LoanController {
         securityService.validateAuthorization(authorization, Feature.VIEW_LENT_BOOKS);
         return loanService.getLentBooksByUser(id);
     }
+
+    @GetMapping(value = "/overdue", produces = APPLICATION_JSON)
+    @ResponseStatus(HttpStatus.OK)
+    public List<BookDTO> viewOverdueBooks(@RequestHeader(value = "Authorization", required = false) String authorization) {
+        securityService.validateAuthorization(authorization, Feature.VIEW_OVERDUE_BOOKS);
+        return loanService.getAllOverdueBooks();
+    }
 }

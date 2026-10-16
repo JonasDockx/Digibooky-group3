@@ -127,4 +127,82 @@ class LoanServiceTest {
 
         Assertions.assertThat(result.size()).isEqualTo(2);
     }
+
+    @Test
+    void requestingAllOverdueBooksMethod_ReturnsAllBooksThatAreOverdue() {
+        User user = new Member("Dockx",
+                "Jonas",
+                "Test@test.com",
+                "Test",
+                "Test",
+                "123",
+                "4567",
+                "Brussels",
+                "password");
+        String userId = user.getId();
+
+        userRepository.addUser(user);
+        Author author = new Author("Matthieu", "Martens");
+        authorRepository.addAuthor(author);
+        String authorId = author.getId();
+
+        Book book = new Book("123456789", "BookTitle", authorId, "Summary");
+        String bookID = book.getId();
+
+        bookRepository.save(book);
+
+        Book book2 = new Book("123456789", "BookTitle2", authorId, "Summary");
+        String book2ID = book2.getId();
+
+        bookRepository.save(book2);
+
+        Loan loan = new Loan(userId, bookID, LocalDate.parse("2026-09-18"));
+        Loan loan2 = new Loan(userId, book2ID);
+
+        loanRepository.save(loan);
+        loanRepository.save(loan2);
+
+        List<BookDTO> result = loanService.getAllOverdueBooks();
+
+        Assertions.assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    void requestingAllOverdueBooksMethod_ReturnsNoBooks_IfNoneAreOverdue() {
+        User user = new Member("Dockx",
+                "Jonas",
+                "Test@test.com",
+                "Test",
+                "Test",
+                "123",
+                "4567",
+                "Brussels",
+                "password");
+        String userId = user.getId();
+
+        userRepository.addUser(user);
+        Author author = new Author("Matthieu", "Martens");
+        authorRepository.addAuthor(author);
+        String authorId = author.getId();
+
+        Book book = new Book("123456789", "BookTitle", authorId, "Summary");
+        String bookID = book.getId();
+
+        bookRepository.save(book);
+
+        Book book2 = new Book("123456789", "BookTitle2", authorId, "Summary");
+        String book2ID = book2.getId();
+
+        bookRepository.save(book2);
+
+        Loan loan = new Loan(userId, bookID);
+        Loan loan2 = new Loan(userId, book2ID);
+
+        loanRepository.save(loan);
+        loanRepository.save(loan2);
+
+        List<BookDTO> result = loanService.getAllOverdueBooks();
+
+        Assertions.assertThat(result.size()).isEqualTo(0);
+    }
 }
