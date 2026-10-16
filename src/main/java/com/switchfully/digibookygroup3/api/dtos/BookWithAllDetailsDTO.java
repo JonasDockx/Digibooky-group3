@@ -1,21 +1,20 @@
 package com.switchfully.digibookygroup3.api.dtos;
 
 
-import com.switchfully.digibookygroup3.domain.user.Member;
-
-public class BookWithAllDetailsDTO extends BookDTO {
-    private final String summary;
-    private final boolean isLoanedOut = true;
-    private final String memberId;
+public class BookWithAllDetailsDTO extends BookWithSummaryDTO {
+    private final String borrowerId;
 
     public BookWithAllDetailsDTO(String id, String title, String isbn, AuthorDTO authorDTO, String summary, String memberId) {
-        super(id, title, isbn, authorDTO);
-        this.summary = summary;
-        this.memberId = memberId;
+        super(id, title, isbn, authorDTO, summary);
+        this.borrowerId = memberId;
     }
 
-    public String getSummary() {
-        return summary;
+    public boolean isLoanedOut() {
+        return true;
+    }
+
+    public String getBorrowerId() {
+        return borrowerId;
     }
 
 }
