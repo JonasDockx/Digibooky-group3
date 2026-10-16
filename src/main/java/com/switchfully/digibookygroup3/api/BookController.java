@@ -73,6 +73,7 @@ public class BookController {
         securityService.validateAuthorization(authorization, Feature.RESTORE_BOOK);
         bookService.restoreBook(id);
     }
+
     @PutMapping(path = "/{id}", produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
     @ResponseStatus(HttpStatus.OK)
     public BookWithSummaryDTO updateBook(@RequestBody UpdateBookDTO updateBookDTO, @PathVariable("id") String id) {

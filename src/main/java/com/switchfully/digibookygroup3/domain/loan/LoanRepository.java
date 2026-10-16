@@ -1,5 +1,6 @@
 package com.switchfully.digibookygroup3.domain.loan;
 
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -31,5 +32,13 @@ public class LoanRepository {
 
     public void clear() {
         loans.clear();
+    }
+
+    public String getUserIdByBookId(String bookId) {
+        return loans.values().stream()
+                .filter(loan -> loan.getBookId().equals(bookId))
+                .map(Loan::getUserId)
+                .findFirst()
+                .orElseThrow(() -> new BookNotFoundException(bookId));
     }
 }

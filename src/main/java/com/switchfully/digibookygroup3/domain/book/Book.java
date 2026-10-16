@@ -9,6 +9,18 @@ public class Book {
         private String authorId;
         private boolean isAvailable;
         private boolean isArchived;
+        private boolean isDeleted;
+        private String summary;
+
+        public Book(String isbn, String title, String authorId, String summary) {
+                this.id = UUID.randomUUID().toString();
+                this.isbn = isbn;
+                this.title = title;
+                this.authorId = authorId;
+                this.isAvailable = true;
+                this.isDeleted = false;
+                this.summary = summary;
+        }
 
         public void setSummary(String summary) {
                 this.summary = summary;
@@ -24,19 +36,6 @@ public class Book {
 
         public void setAuthorId(String authorId) {
                 this.authorId = authorId;
-        }
-
-        private boolean isDeleted;
-        private String summary;
-
-        public Book(String isbn, String title, String authorId, String summary) {
-                this.id = UUID.randomUUID().toString();
-                this.isbn = isbn;
-                this.title = title;
-                this.authorId = authorId;
-                this.isAvailable = true;
-                this.isDeleted = false;
-                this.summary = summary;
         }
 
         public void softDelete() {

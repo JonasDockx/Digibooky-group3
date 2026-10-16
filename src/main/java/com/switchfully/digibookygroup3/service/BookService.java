@@ -1,10 +1,6 @@
 package com.switchfully.digibookygroup3.service;
 
-import com.switchfully.digibookygroup3.api.dtos.AuthorDTO;
-import com.switchfully.digibookygroup3.api.dtos.BookDTO;
-import com.switchfully.digibookygroup3.api.dtos.BookWithSummaryDTO;
-import com.switchfully.digibookygroup3.api.dtos.UpdateBookDTO;
-import com.switchfully.digibookygroup3.api.dtos.CreateBookDTO;
+import com.switchfully.digibookygroup3.api.dtos.*;
 import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
@@ -56,7 +52,10 @@ public class BookService {
         logger.info("Received getBookById request with id {}", id);
         Book book = getBookByIdOrElseThrowBookNotFoundException(id);
 
-        return mapToDtoWithSummary(book);
+        if (book.isAvailable()) {
+            return mapToDtoWithSummary(book);
+        }
+        return mapToDtoWithAllDetails(book);
     }
 
     private Book getBookByIdOrElseThrowBookNotFoundException(String id) {
@@ -74,6 +73,11 @@ public class BookService {
     private BookWithSummaryDTO mapToDtoWithSummary(Book book) {
         logger.info("Mapping a book to a BookWithSummaryDTO");
         return bookMapper.toDtoWithSummary(book, getAuthorDTOById(book.getAuthorId()));
+    }
+
+    private BookWithAllDetailsDTO mapToDtoWithAllDetails(Book book) {
+        logger.info("Mapping a book to a BookWithSAllDetailsDTO");
+        return bookMapper.toDtoWithAllDetails(book, getAuthorDTOById(book.getAuthorId()));
     }
 
     private Author getAuthorById(String id) {
