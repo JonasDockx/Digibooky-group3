@@ -18,7 +18,7 @@ import java.time.LocalDate;
 
 @Service
 public class LoanService {
-    private static final int LOAD_PERIOD = 3;
+
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
@@ -33,16 +33,16 @@ public class LoanService {
     }
 
     public LoanDTO lendABook(String bookId, String userId) {
-            doesUserExist(userId);
-            Book book = getBookById(bookId);
+        doesUserExist(userId);
+        Book book = getBookById(bookId);
 
-            if (!book.isAvailable()) {
-                throw new BookUnavailableException(bookId);
-            }
+        if (!book.isAvailable()) {
+            throw new BookUnavailableException(bookId);
+        }
 
-            Loan loan = loanRepository.save(new Loan(userId, bookId, getReturnDate()));
-            book.markAsUnavailable();
-            return loanMapper.mapToDTO(loan, book.getIsbn());
+        Loan loan = loanRepository.save(new Loan(userId, bookId));
+        book.markAsUnavailable();
+        return loanMapper.mapToDTO(loan, book.getIsbn());
     }
 
     private Book getBookById(String bookId) {
@@ -53,10 +53,6 @@ public class LoanService {
     private void doesUserExist(String userId) {
         userRepository.getById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
-    }
-
-    private LocalDate getReturnDate() {
-        return LocalDate.now().plusWeeks(LOAD_PERIOD);
     }
 
 }
