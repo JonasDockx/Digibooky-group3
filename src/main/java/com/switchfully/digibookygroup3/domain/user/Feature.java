@@ -7,6 +7,7 @@ public enum Feature {
     DELETE_BOOK,
     RESTORE_BOOK,
     VIEW_LENT_BOOKS,
-    VIEW_OVERDUE_BOOKS,
-    LEND_BOOK;
+    LEND_BOOK,
+    RETURN_BOOK,
+    VIEW_OVERDUE_BOOKS;
 }

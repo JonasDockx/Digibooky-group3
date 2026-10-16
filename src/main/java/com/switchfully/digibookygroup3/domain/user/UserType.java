@@ -1,17 +1,13 @@
 package com.switchfully.digibookygroup3.domain.user;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public enum UserType {
     LIBRARIAN(List.of(Feature.REGISTER_BOOK, Feature.DELETE_BOOK, Feature.RESTORE_BOOK, Feature.VIEW_LENT_BOOKS, Feature.VIEW_OVERDUE_BOOKS)),
     ADMIN(List.of(Feature.VIEW_MEMBERS, Feature.REGISTER_LIBRARIAN)),
-    MEMBER(List.of(Feature.LEND_BOOK));
+    MEMBER(List.of(Feature.LEND_BOOK, Feature.RETURN_BOOK));
 
-    private List<Feature> features = new ArrayList<>();
-
-    UserType() {
-    }
+    private final List<Feature> features;
 
     UserType(List<Feature> features) {
         this.features = features;

@@ -4,12 +4,14 @@ import com.switchfully.digibookygroup3.api.dtos.CreateLoanDTO;
 import com.switchfully.digibookygroup3.api.dtos.LoanDTO;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
+import com.switchfully.digibookygroup3.domain.loan.Loan;
 import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
 import com.switchfully.digibookygroup3.domain.user.Member;
 import com.switchfully.digibookygroup3.domain.user.User;
 import com.switchfully.digibookygroup3.domain.user.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +42,8 @@ public class LoanControllerIntegrationTest {
     private Book availableBook;
     private Book unavailableBook;
     private User user;
+    private Loan overdueLoan;
+    private Loan dueLoan;
 
 
     private void addBooks() {
@@ -62,6 +66,20 @@ public class LoanControllerIntegrationTest {
                 "member",
                 "pass");
         userRepository.addUser(user);
+    }
+
+    private void addLoans(){
+        overdueLoan = new Loan(user.getId(), unavailableBook.getId(), LocalDate.now().minusWeeks(4));
+        dueLoan = new Loan(user.getId(), unavailableBook.getId(), LocalDate.now().plusWeeks(1));
+        loanRepository.save(overdueLoan);
+        loanRepository.save(dueLoan);
+    }
+
+    @BeforeEach
+    void reset(){
+        userRepository.resetMembers();
+        bookRepository.clear();
+        loanRepository.clear();
     }
 
     @Test
@@ -153,6 +171,8 @@ public class LoanControllerIntegrationTest {
     void givenWrightCredentialAndUnavailableBook_then404(){
         addBooks();
         addMember();
+        unavailableBook.markAsUnavailable();
+        System.out.println(unavailableBook.isAvailable());
         CreateLoanDTO dto = new CreateLoanDTO(unavailableBook.getIsbn(), user.getId());
 
         String response = RestAssured.given()
@@ -169,6 +189,50 @@ public class LoanControllerIntegrationTest {
                 .extract()
                 .asString();
 
-        assertThat(response.equals("Book with isbn: " + unavailableBook.getIsbn() + " is not available"));
+        assertThat(response).isEqualTo("Book with isbn: " + unavailableBook.getIsbn() + " is not available");
+    }
+
+    @Test
+    void givenADueBookReturn_thenDueReturnMessageAnd200(){
+        addBooks();
+        addMember();
+        addLoans();
+
+        String response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .auth()
+                .preemptive()
+                .basic(user.getEmail(), user.getPassword())
+                .when()
+                .port(port)
+                .post(PATH + "/return/" + dueLoan.getId())
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .asString();
+
+        assertThat(response).isEqualTo("Your book has been returned");
+    }
+
+    @Test
+    void givenAOverdueBookReturn_thenOverdueReturnMessageAnd200(){
+        addBooks();
+        addMember();
+        addLoans();
+
+        String response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .auth()
+                .preemptive()
+                .basic(user.getEmail(), user.getPassword())
+                .when()
+                .port(port)
+                .post(PATH + "/return/" + overdueLoan.getId())
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .asString();
+
+        assertThat(response).isEqualTo("Your book has been returned with overdue of 7 days");
     }
 }

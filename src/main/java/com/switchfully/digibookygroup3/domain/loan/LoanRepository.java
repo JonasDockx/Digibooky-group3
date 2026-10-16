@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -22,5 +23,13 @@ public class LoanRepository {
 
     public List<Loan> getLoans() {
         return new ArrayList<>(loans.values());
+    }
+
+    public Optional<Loan> getLoanById(String id) {
+        return Optional.ofNullable(loans.get(id));
+    }
+
+    public void clear() {
+        loans.clear();
     }
 }
