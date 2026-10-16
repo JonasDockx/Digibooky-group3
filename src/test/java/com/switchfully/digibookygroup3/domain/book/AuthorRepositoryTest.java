@@ -1,10 +1,11 @@
 package com.switchfully.digibookygroup3.domain.book;
 
+import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
+import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 
 class AuthorRepositoryTest {
     private AuthorRepository authorRepository;
@@ -67,6 +68,7 @@ class AuthorRepositoryTest {
 
     @Test
     void getAuthorsByName_givenUnknownName_thenReturnsEmptyList() {
-        assertThat(authorRepository.getAuthorsByName("Pratchett")).isEmpty();
+        assertThatThrownBy(() -> authorRepository.getAuthorsByName("Pratchett"))
+                .isInstanceOf(AuthorNotFoundException.class);
     }
 }

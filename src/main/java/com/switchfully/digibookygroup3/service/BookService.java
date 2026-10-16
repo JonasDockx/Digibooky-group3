@@ -144,7 +144,7 @@ public class BookService {
         String authorId = authors.get(0).getId();
 
         Book book = bookMapper.mapDTOToBook(dto, authorId);
-        bookRepository.addBook(book);
+        bookRepository.save(book);
         logger.info("User Librarian created book with id {}", book.getId());
         return bookMapper.toDto(book, getAuthorDTOById(authorId));
     }
