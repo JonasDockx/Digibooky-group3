@@ -6,6 +6,7 @@ import com.switchfully.digibookygroup3.api.dtos.LoanDTO;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
 import com.switchfully.digibookygroup3.domain.user.Feature;
 import com.switchfully.digibookygroup3.service.BookService;
+import com.switchfully.digibookygroup3.domain.user.Feature;
 import com.switchfully.digibookygroup3.service.LoanService;
 import com.switchfully.digibookygroup3.service.SecurityService;
 import org.springframework.http.HttpStatus;
@@ -19,22 +20,22 @@ import java.util.List;
 public class LoanController {
     private static final String APPLICATION_JSON = "application/json";
     private final LoanService loanService;
-    private final BookRepository bookRepository;
     private final BookService bookService;
     private SecurityService securityService;
+    private final SecurityService securityService;
 
     public LoanController(LoanService loanService, SecurityService securityService, BookRepository bookRepository, BookService bookService) {
 
         this.loanService = loanService;
         this.securityService = securityService;
-        this.bookRepository = bookRepository;
         this.bookService = bookService;
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
-    public LoanDTO lendABook(@RequestBody CreateLoanDTO createLoanDTO) {
-        return loanService.lendABook(createLoanDTO.bookId(), createLoanDTO.userId());
+    @ResponseStatus(HttpStatus.CREATED)
+    public LoanDTO lendABook(@RequestHeader(value = "Authorization", required = false) String authorization, @RequestBody CreateLoanDTO createLoanDTO) {
+        securityService.validateAuthorization(authorization, Feature.LEND_BOOK);
+        return loanService.lendABook(createLoanDTO.bookIsbn(), createLoanDTO.userId());
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_JSON)

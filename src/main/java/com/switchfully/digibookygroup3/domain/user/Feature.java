@@ -6,5 +6,6 @@ public enum Feature {
     REGISTER_LIBRARIAN,
     DELETE_BOOK,
     RESTORE_BOOK,
-    VIEW_LENT_BOOKS
+    VIEW_LENT_BOOKS,
+    LEND_BOOK;
 }
