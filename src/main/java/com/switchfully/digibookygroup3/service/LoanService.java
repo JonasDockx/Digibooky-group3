@@ -40,29 +40,43 @@ public class LoanService {
         this.authorMapper = authorMapper;
     }
 
+    private List<BookDTO> convertLoanListToBookDTOList(List<Loan> loanList) {
+        return loanList.stream()
+                .map(loan -> getBookById(loan.getBookId()))
+                .map(book -> bookMapper.toDto(book, authorMapper.toDto(authorRepository.getById(book.getAuthorId()).get())))
+                .toList();
+    }
+
     public List<BookDTO> getLentBooksByUser(String id) {
         List<Loan> loans = loanRepository.getLoans();
         List<Loan> filteredLoans = loans.stream()
                 .filter(loan -> loan.getUserId().equals(id))
                 .toList();
 
-        return filteredLoans.stream()
-                .map(loan -> getBookById(loan.getBookId()))
-                .map(book -> bookMapper.toDto(book, authorMapper.toDto(authorRepository.getById(book.getAuthorId()).get())))
+        return convertLoanListToBookDTOList(filteredLoans);
+    }
+
+    public List<BookDTO> getAllOverdueBooks() {
+        List<Loan> loans = loanRepository.getLoans();
+
+        List<Loan> loanList = loans.stream()
+                .filter(Loan::isOverdue)
                 .toList();
+
+        return convertLoanListToBookDTOList(loanList);
     }
 
     public LoanDTO lendABook(String bookIsbn, String userId) {
-            doesUserExist(userId);
-            Book book = getBookByIsbn(bookIsbn);
+        doesUserExist(userId);
+        Book book = getBookByIsbn(bookIsbn);
 
-            if (!book.isAvailable()) {
-                throw new BookUnavailableException(bookIsbn);
-            }
+        if (!book.isAvailable()) {
+            throw new BookUnavailableException(bookIsbn);
+        }
 
-            Loan loan = loanRepository.save(new Loan(userId, book.getId()));
-            book.markAsUnavailable();
-            return loanMapper.mapToDTO(loan, book.getIsbn());
+        Loan loan = loanRepository.save(new Loan(userId, book.getId()));
+        book.markAsUnavailable();
+        return loanMapper.mapToDTO(loan, book.getIsbn());
     }
 
     private Book getBookByIsbn(String bookIsbn) {

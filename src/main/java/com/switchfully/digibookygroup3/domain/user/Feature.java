@@ -8,5 +8,6 @@ public enum Feature {
     RESTORE_BOOK,
     VIEW_LENT_BOOKS,
     LEND_BOOK,
-    RETURN;
+    RETURN_BOOK,
+    VIEW_OVERDUE_BOOKS;
 }
