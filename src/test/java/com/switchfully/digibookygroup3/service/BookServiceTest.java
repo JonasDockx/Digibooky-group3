@@ -7,6 +7,7 @@ import com.switchfully.digibookygroup3.domain.book.Author;
 import com.switchfully.digibookygroup3.domain.book.AuthorRepository;
 import com.switchfully.digibookygroup3.domain.book.Book;
 import com.switchfully.digibookygroup3.domain.book.BookRepository;
+import com.switchfully.digibookygroup3.domain.loan.LoanRepository;
 import com.switchfully.digibookygroup3.exception.AuthorNotFoundException;
 import com.switchfully.digibookygroup3.exception.BookNotFoundException;
 import com.switchfully.digibookygroup3.mapper.AuthorMapper;
@@ -24,6 +25,7 @@ class BookServiceTest {
     private BookService bookService;
     private BookRepository bookRepositoryMock;
     private AuthorRepository authorRepositoryMock;
+    private LoanRepository loanRepositoryMock;
     private List<Author> authors;
     private List<Book> books;
 
@@ -32,7 +34,7 @@ class BookServiceTest {
         bookRepositoryMock = mock(BookRepository.class);
         authorRepositoryMock = mock(AuthorRepository.class);
         bookService = new BookService(bookRepositoryMock, authorRepositoryMock,
-                new BookMapper(new AuthorRepository()), new AuthorMapper());
+                new BookMapper(new AuthorRepository()), new AuthorMapper(), loanRepositoryMock);
         addAuthorsAndBooks();
     }
 
