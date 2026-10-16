@@ -1,19 +1,17 @@
 package com.switchfully.digibookygroup3.domain.loan;
-
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 public class Loan {
     private static final int LOAN_PERIOD = 3;
 
-    private String id;
-    private String userId;
-    private String bookId;
+    private final String id;
+    private final String userId;
+    private final String bookId;
     private boolean isActive;
-    private LocalDate loanDate;
-    private LocalDate dueDate;
+    private final LocalDate loanDate;
+    private final LocalDate dueDate;
 
     public Loan(String userId, String bookId) {
         this.id = UUID.randomUUID().toString();
@@ -48,15 +46,15 @@ public class Loan {
         return dueDate;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
     public void markAsInactive() {
         isActive = false;
     }
 
     public boolean isOverdue() {
         return LocalDate.now().isAfter(getDueDate());
+    }
+
+    public long getOverdueDays(){
+        return ChronoUnit.DAYS.between(getDueDate(), LocalDate.now());
     }
 }

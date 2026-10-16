@@ -28,4 +28,8 @@ public class LoanRepository {
     public Optional<Loan> getLoanById(String id) {
         return Optional.ofNullable(loans.get(id));
     }
+
+    public void clear() {
+        loans.clear();
+    }
 }

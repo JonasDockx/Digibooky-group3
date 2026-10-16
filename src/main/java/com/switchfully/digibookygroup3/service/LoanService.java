@@ -13,9 +13,6 @@ import com.switchfully.digibookygroup3.mapper.AuthorMapper;
 import com.switchfully.digibookygroup3.mapper.BookMapper;
 import com.switchfully.digibookygroup3.mapper.LoanMapper;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -43,7 +40,8 @@ public class LoanService {
     private List<BookDTO> convertLoanListToBookDTOList(List<Loan> loanList) {
         return loanList.stream()
                 .map(loan -> getBookById(loan.getBookId()))
-                .map(book -> bookMapper.toDto(book, authorMapper.toDto(authorRepository.getById(book.getAuthorId()).get())))
+                .map(book -> bookMapper.toDto(book, authorMapper.toDto(authorRepository.getById(book.getAuthorId())
+                        .orElseThrow(() -> new AuthorNotFoundException(book.getAuthorId())))))
                 .toList();
     }
 
@@ -95,18 +93,16 @@ public class LoanService {
     }
 
     public String returnBook(String id) {
-        String response = "You book has been returned";
+        String response = "Your book has been returned";
         Loan loan = loanRepository.getLoanById(id)
                         .orElseThrow(() -> new LoanNotFoundException(id));
         Book book = getBookById(loan.getBookId());
 
         loan.markAsInactive();
         book.markAsAvailable();
-        LocalDate now = LocalDate.now();
 
-        if(loan.getDueDate().isBefore(now)){
-            long daysBetween = ChronoUnit.DAYS.between(loan.getDueDate(), now);
-            response += " with " + daysBetween + " days overdue";
+        if(loan.isOverdue()){
+            response += " with overdue of " + loan.getOverdueDays() + " days";
         }
         return response;
     }
