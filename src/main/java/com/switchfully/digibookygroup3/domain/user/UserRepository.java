@@ -20,6 +20,10 @@ public class UserRepository {
         users.put(user.getId(), user);
     }
 
+    public Optional<User> getById(String id) {
+        return Optional.ofNullable(users.get(id));
+    }
+
     public List<Member> getAllMembers() {
 
         return users.values()

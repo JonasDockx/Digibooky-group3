@@ -45,6 +45,13 @@ public class BookRepository {
         return filterActiveBooks(allBooks);
     }
 
+    public Optional<Book> getBookByIsbn(String isbn) {
+        return books.values()
+                .stream()
+                .filter((book -> book.getIsbn().equals(isbn)))
+                .findFirst();
+    }
+
     public List<Book> getBooksByTitle(String title) {
         String regex = "(?i)^" + title.trim().replace("*", "\\d*") + "$";
 

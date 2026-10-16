@@ -70,4 +70,16 @@ public class Book {
         public boolean isDeleted() {
                 return isDeleted;
         }
+
+        public void markAsAvailable() {
+                isAvailable = true;
+        }
+
+        public void markAsUnavailable() {
+                isAvailable = false;
+        }
+
+        public boolean isAvailable() {
+                return isAvailable;
+        }
 }
